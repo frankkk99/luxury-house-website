@@ -1,0 +1,66 @@
+.flowTopBar {
+  border: 1px solid rgba(255, 255, 255, .18) !important;
+  background: rgba(8, 8, 7, .20) !important;
+  backdrop-filter: blur(26px) saturate(1.15) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(1.15) !important;
+  box-shadow: 0 18px 70px rgba(0, 0, 0, .18) !important;
+}
+
+.flowTopBar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.025));
+}
+
+.brandChip,
+.topSearch,
+.topSearch button,
+.topTools button,
+.topTools a {
+  border: 1px solid rgba(255, 255, 255, .16) !important;
+  background: rgba(255, 255, 255, .10) !important;
+  color: rgba(255, 255, 255, .92) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+
+.brandChip span {
+  background: rgba(255,255,255,.18) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.18);
+}
+
+.topSearch input {
+  color: #fff !important;
+}
+
+.topSearch input::placeholder {
+  color: rgba(255,255,255,.62) !important;
+}
+
+.topSearch:focus-within,
+.brandChip:hover,
+.topTools button:hover,
+.topTools a:hover {
+  background: rgba(255,255,255,.16) !important;
+  border-color: rgba(255,255,255,.28) !important;
+}
+
+.flowTopBar.scrolled {
+  background: rgba(8, 8, 7, .46) !important;
+  border-color: rgba(255,255,255,.22) !important;
+  box-shadow: 0 22px 80px rgba(0,0,0,.26) !important;
+}
+
+:root[data-theme='dark'] .flowTopBar {
+  background: rgba(8, 8, 7, .34) !important;
+}
+
+@media (max-width: 900px) {
+  .flowTopBar {
+    background: rgba(8, 8, 7, .36) !important;
+  }
+}
