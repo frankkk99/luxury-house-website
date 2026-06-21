@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { featuredProperties, properties, propertyTypes } from './data/properties.js'
 
-const SITE_URL = 'https://luxury-house-website.vercel.app'
+const SITE_URL = 'https://luxury-house-website-orcin.vercel.app'
 
 const contact = {
   brand: 'Frank Creative / AlphaLab',
@@ -77,7 +77,7 @@ function TopBar({ theme, onToggleTheme, scrolled }) {
         <span>AE</span>
         <div>
           <strong>ALPHA ESTATE</strong>
-          <small>Luxury listing system</small>
+          <small>Premium property</small>
         </div>
       </a>
       <nav className="topNav" aria-label="Primary">
@@ -118,7 +118,7 @@ function PropertyCarousel({ title, subtitle, items, onOpen }) {
     <section className="carouselSection" aria-label={title}>
       <div className="rowHead">
         <div>
-          <p className="eyebrow">CURATED ROW</p>
+          <p className="eyebrow">PROPERTY SELECTION</p>
           <h2>{title}</h2>
         </div>
         <span>{subtitle}</span>
@@ -231,11 +231,11 @@ function PropertyDetailPage({ property, theme, toggleTheme, scrolled }) {
         </article>
       </section>
       <section className="seoDetailCopy">
-        <p className="eyebrow">SEO DETAIL</p>
+        <p className="eyebrow">PROPERTY DETAIL</p>
         <h2>{property.propertyLabel} {property.location} สำหรับ{property.listingLabel}</h2>
         <p>
-          หน้านี้ถูกออกแบบให้มี URL แยกสำหรับแต่ละทรัพย์ รองรับการแชร์ลิงก์ ยิงแอด และทำ SEO รายการอสังหา
-          โดยมีข้อมูลราคา ทำเล ประเภท พื้นที่ รูปภาพ และช่องทางติดต่อครบในหน้าเดียว
+          รวมข้อมูลสำคัญของทรัพย์ รายละเอียดพื้นที่ ราคา ทำเล รูปภาพ และช่องทางติดต่อ
+          เพื่อให้ผู้สนใจตัดสินใจและนัดหมายเข้าชมได้สะดวก
         </p>
       </section>
     </main>
@@ -276,7 +276,7 @@ function App() {
 
   useEffect(() => {
     if (detailSlug) return
-    document.title = 'ALPHA ESTATE | เว็บอสังหาเรียบหรู พร้อมระบบค้นหา พิกัด และ SEO'
+    document.title = 'ALPHA ESTATE | ค้นหาบ้าน ที่ดิน และอสังหาริมทรัพย์ทำเลดี'
   }, [detailSlug])
 
   const filteredProperties = useMemo(() => {
@@ -311,23 +311,23 @@ function App() {
 
   const collections = useMemo(() => [
     {
-      title: 'ทรัพย์แนะนำเปิดดูไว',
-      subtitle: 'รายการเด่นแบบ carousel',
+      title: 'ทรัพย์แนะนำ',
+      subtitle: 'รายการคัดสรรสำหรับเริ่มดู',
       items: filteredProperties.slice(0, 18),
     },
     {
       title: 'บ้านและทาวน์โฮม',
-      subtitle: 'เหมาะกับลูกค้าครอบครัว',
+      subtitle: 'เหมาะสำหรับอยู่อาศัยและครอบครัว',
       items: filteredProperties.filter((item) => ['house', 'townhome'].includes(item.propertyType)).slice(0, 18),
     },
     {
       title: 'ที่ดิน อาคาร และโกดัง',
-      subtitle: 'สำหรับลงทุนและธุรกิจ',
+      subtitle: 'เหมาะสำหรับลงทุนหรือทำธุรกิจ',
       items: filteredProperties.filter((item) => ['land', 'commercial', 'warehouse', 'office'].includes(item.propertyType)).slice(0, 18),
     },
     {
-      title: 'เช่าอยู่หรือทำธุรกิจ',
-      subtitle: 'รายการเช่าดูง่าย',
+      title: 'รายการให้เช่า',
+      subtitle: 'บ้าน คอนโด ออฟฟิศ และโกดังให้เช่า',
       items: filteredProperties.filter((item) => item.listingType === 'rent').slice(0, 18),
     },
   ], [filteredProperties])
@@ -375,15 +375,14 @@ function App() {
         <div className="heroOverlay" />
         <div className="heroContent">
           <div className="heroCopy">
-            <p className="eyebrow">RANDOM FEATURED LISTING · {formatDate()}</p>
-            <h1>หาอสังหาแบบโล่งๆ เห็นภาพก่อน ตัดสินใจง่ายกว่า</h1>
+            <p className="eyebrow">FEATURED PROPERTY · {formatDate()}</p>
+            <h1>คัดสรรอสังหาริมทรัพย์ทำเลดี พร้อมดูรายละเอียดได้ทันที</h1>
             <p className="heroLead">
-              เว็บเดโมอสังหาสไตล์หรู โปร่ง และเน้น flow ใช้งานจริง แสดงเฉพาะข้อมูลสำคัญบนหน้าแรก
-              ส่วนรายละเอียดเชิงลึกเปิดดูใน modal หรือหน้าเต็มแยกได้ทันที
+              เลือกดูบ้าน ที่ดิน คอนโด อาคารพาณิชย์ และทรัพย์เพื่อการลงทุน พร้อมภาพชัด รายละเอียดสำคัญ และช่องทางติดต่อโดยตรง
             </p>
             <div className="heroActions">
               <a href="#search" className="primaryBtn">เริ่มค้นหา</a>
-              <button className="ghostBtn" onClick={() => setSelectedProperty(heroProperty)}>ดูทรัพย์สุ่มนี้</button>
+              <button className="ghostBtn" onClick={() => setSelectedProperty(heroProperty)}>ดูทรัพย์แนะนำ</button>
             </div>
           </div>
 
@@ -407,9 +406,9 @@ function App() {
 
       <section id="search" className="searchPanel">
         <div className="sectionHead compact">
-          <p className="eyebrow">SMART SEARCH</p>
-          <h2>ค้นหาเท่าที่จำเป็น แล้วปล่อยให้ภาพขายแทน</h2>
-          <p>เลือกซื้อ เช่า หรือทั้งหมด กรองประเภท และใช้พิกัดจากเครื่องได้โดยไม่ทำให้หน้าแรกแน่นเกินไป</p>
+          <p className="eyebrow">PROPERTY SEARCH</p>
+          <h2>ค้นหาอสังหาตามทำเลและประเภทที่ต้องการ</h2>
+          <p>เลือกซื้อ เช่า หรือดูทั้งหมด พร้อมกรองประเภททรัพย์และใช้พิกัดเพื่อเรียงรายการใกล้คุณก่อน</p>
         </div>
 
         <div className="filterGlass">
@@ -434,7 +433,7 @@ function App() {
           <div className="filterActions">
             <button onClick={requestLocation} className="locationBtn">ใช้พิกัดของฉัน</button>
             <button onClick={clearFilters} className="clearBtn">ล้างตัวกรอง</button>
-            <span>{geoStatus || `พบ ${filteredProperties.length} รายการจากข้อมูลเดโม 200 ชุด`}</span>
+            <span>{geoStatus || `พบ ${filteredProperties.length} รายการพร้อมดูรายละเอียด`}</span>
           </div>
         </div>
       </section>
@@ -447,11 +446,11 @@ function App() {
 
       <section id="contact" className="contactSection">
         <div>
-          <p className="eyebrow">CONTACT SYSTEM</p>
-          <h2>ช่องทางติดต่อชัด แต่ไม่แออัดหน้าแรก</h2>
+          <p className="eyebrow">CONTACT</p>
+          <h2>สอบถามและนัดชมทรัพย์ได้โดยตรง</h2>
           <p>
-            ปุ่มโทร LINE อีเมล และ portfolio ถูกวางไว้เฉพาะจุดที่ผู้ใช้พร้อมตัดสินใจ
-            เพื่อให้เว็บดูโปร่งและยังปิดการติดต่อได้ไว
+            เลือกรายการที่สนใจ แล้วติดต่อผ่านโทรศัพท์ LINE หรืออีเมลได้ทันที
+            เพื่อรับข้อมูลเพิ่มเติมและนัดหมายเข้าชมทรัพย์
           </p>
         </div>
         <div className="contactCard">
