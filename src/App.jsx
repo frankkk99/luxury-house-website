@@ -415,7 +415,7 @@ function DetailPage({ property, related, theme, onTheme }) {
       </section>
 
       <section className="autoRecommend">
-        <CarouselRow number="RE" title="อสังหาแนะนำ" subtitle="เลื่อนอัตโนมัติจากรายการใกล้เคียง" items={[...related, ...related].slice(0, 24)} onOpen={(item) => window.open(`/property/${item.slug}`, '_blank', 'noopener,noreferrer')} />
+        <CarouselRow number="01" title="อสังหาแนะนำ" subtitle="เลื่อนอัตโนมัติจากรายการใกล้เคียง" items={[...related, ...related].slice(0, 24)} onOpen={(item) => window.open(`/property/${item.slug}`, '_blank', 'noopener,noreferrer')} />
       </section>
 
       <footer className="detailStickyContact">
