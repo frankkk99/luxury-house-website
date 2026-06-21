@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://luxury-house-website-weld.vercel.app/sitemap.xml
+Sitemap: https://luxury-house-website.vercel.app/sitemap.xml
