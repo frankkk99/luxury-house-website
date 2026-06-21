@@ -16,6 +16,14 @@ const intentOptions = [
 ]
 
 const typeOptions = propertyTypes.filter((type) => type.value !== 'all')
+const priceOptions = [
+  { value: 'all', label: 'ทุกงบ' },
+  { value: 'starter', label: 'เริ่มต้น' },
+  { value: 'mid', label: 'กลาง' },
+  { value: 'premium', label: 'พรีเมียม' },
+  { value: 'luxury', label: 'ลักชัวรี' },
+]
+
 const normalize = (value) => String(value ?? '').toLowerCase().replace(/\s+/g, '')
 const toRad = (value) => (value * Math.PI) / 180
 
@@ -33,11 +41,11 @@ const aliases = [
 ]
 
 const defaultUi = {
-  cardWidth: 230,
-  cardHeight: 138,
-  heroHeight: 100,
-  sectionGap: 54,
-  topOpacity: 28,
+  cardWidth: 320,
+  cardHeight: 220,
+  heroHeight: 88,
+  sectionGap: 38,
+  topOpacity: 26,
 }
 
 const getDistanceKm = (from, to) => {
@@ -81,20 +89,34 @@ function applyUi(settings) {
   root.style.setProperty('--flow-top-opacity', `${settings.topOpacity / 100}`)
 }
 
+function priceMatches(property, priceRange) {
+  if (priceRange === 'all') return true
+  const isRent = property.listingType === 'rent'
+  const price = property.price
+  if (priceRange === 'starter') return isRent ? price <= 30000 : price <= 3000000
+  if (priceRange === 'mid') return isRent ? price > 30000 && price <= 50000 : price > 3000000 && price <= 6000000
+  if (priceRange === 'premium') return isRent ? price > 50000 && price <= 80000 : price > 6000000 && price <= 10000000
+  if (priceRange === 'luxury') return isRent ? price > 80000 : price > 10000000
+  return true
+}
+
 function TransparentSearchBar({ query, onQuery, onSearch, theme, onTheme, onBack, currentStep }) {
+  const showSearch = currentStep !== 'detail'
   return (
     <header className={`flowTopBar step-${currentStep}`}>
       <button className="brandChip" onClick={() => window.location.assign('/')}>
         <span>AE</span>
         <strong>ALPHA ESTATE</strong>
       </button>
-      <form className="topSearch" onSubmit={(event) => { event.preventDefault(); onSearch?.() }}>
-        <input value={query} onChange={(event) => onQuery(event.target.value)} placeholder="ค้นหาทำเล บ้าน ที่ดิน อาคาร หรือคอนโด" />
-        <button>ค้นหา</button>
-      </form>
+      {showSearch && (
+        <form className="topSearch" onSubmit={(event) => { event.preventDefault(); onSearch?.() }}>
+          <input value={query} onChange={(event) => onQuery(event.target.value)} placeholder="ค้นหาทำเล บ้าน ที่ดิน อาคาร หรือคอนโด" />
+          <button>ค้นหา</button>
+        </form>
+      )}
       <div className="topTools">
-        {currentStep !== 'intent' && <button onClick={onBack}>ย้อนกลับ</button>}
-        <button onClick={onTheme}>{theme === 'dark' ? 'สว่าง' : 'มืด'}</button>
+        {['types', 'detail'].includes(currentStep) && <button onClick={onBack}>ย้อนกลับ</button>}
+        <button onClick={onTheme}>{theme === 'dark' ? '☀️ สว่าง' : '🌙 มืด'}</button>
         <a href={`tel:${contact.phone}`}>โทร</a>
       </div>
     </header>
@@ -105,8 +127,8 @@ function UiPanel({ visible, settings, onChange, onReset, onClose }) {
   if (!visible) return null
   const controls = [
     ['heroHeight', 'ความสูงหน้าแรก', 72, 112, 'vh'],
-    ['cardWidth', 'ความกว้างการ์ด', 170, 320, 'px'],
-    ['cardHeight', 'ความสูงภาพการ์ด', 95, 220, 'px'],
+    ['cardWidth', 'ความกว้างการ์ด', 220, 380, 'px'],
+    ['cardHeight', 'ความสูงภาพการ์ด', 160, 260, 'px'],
     ['sectionGap', 'ช่องไฟแต่ละส่วน', 24, 96, 'px'],
     ['topOpacity', 'ความโปร่งแถบบน', 8, 72, '%'],
   ]
@@ -211,19 +233,52 @@ function CarouselRow({ number, title, subtitle, items, onOpen, action }) {
   )
 }
 
-function ResultsScreen({ rows, onOpen, onLocation, geoStatus, selectedTypes, intent, onChangeTypes }) {
+function FilterBar({ intent, onIntentChange, selectedTypes, onToggleType, priceRange, onPriceChange, onClear }) {
   return (
-    <section className="resultsScreen">
-      <div className="resultsIntro">
-        <p className="flowEyebrow">RESULTS</p>
-        <h1>{intent === 'rent' ? 'รายการให้เช่าที่เหมาะกับคุณ' : 'รายการขายที่เหมาะกับคุณ'}</h1>
-        <p>{selectedTypes.length ? `ประเภทที่เลือก ${selectedTypes.length} รายการ` : 'แสดงทุกประเภท'} · เลื่อนแต่ละแถวเพื่อดูทรัพย์เพิ่มเติม</p>
-        <button className="softButton" onClick={onChangeTypes}>เปลี่ยนประเภท</button>
+    <div className="quickFilterBar">
+      <div className="filterGroup intentFilter" aria-label="เลือกซื้อหรือเช่า">
+        <button className={!intent ? 'active' : ''} onClick={() => onIntentChange('')}>ทั้งหมด</button>
+        {intentOptions.map((option) => (
+          <button key={option.value} className={intent === option.value ? 'active' : ''} onClick={() => onIntentChange(option.value)}>{option.label}</button>
+        ))}
       </div>
+      <div className="filterGroup typeFilter" aria-label="เลือกประเภทอสังหา">
+        {typeOptions.slice(0, 7).map((type) => (
+          <button key={type.value} className={selectedTypes.includes(type.value) ? 'active' : ''} onClick={() => onToggleType(type.value)}>{type.label}</button>
+        ))}
+      </div>
+      <div className="filterGroup priceFilter" aria-label="เลือกช่วงราคา">
+        {priceOptions.map((option) => (
+          <button key={option.value} className={priceRange === option.value ? 'active' : ''} onClick={() => onPriceChange(option.value)}>{option.label}</button>
+        ))}
+        <button className="clearFilter" onClick={onClear}>ล้าง</button>
+      </div>
+    </div>
+  )
+}
+
+function ResultsScreen({ rows, onOpen, onLocation, geoStatus, selectedTypes, intent, onIntentChange, onToggleType, priceRange, onPriceChange, onClearFilters, total }) {
+  const headline = intent === 'rent' ? 'อสังหาให้เช่าที่คัดมาให้' : intent === 'sale' ? 'อสังหาน่าซื้อที่คัดมาให้' : 'อสังหาแนะนำสำหรับคุณ'
+  return (
+    <section className="resultsScreen listingFirstScreen">
+      <div className="resultsIntro">
+        <p className="flowEyebrow">ALPHA ESTATE</p>
+        <h1>{headline}</h1>
+        <p>{total} รายการ · เลือกซื้อ/เช่า ประเภท และงบประมาณได้ทันที</p>
+      </div>
+      <FilterBar
+        intent={intent}
+        onIntentChange={onIntentChange}
+        selectedTypes={selectedTypes}
+        onToggleType={onToggleType}
+        priceRange={priceRange}
+        onPriceChange={onPriceChange}
+        onClear={onClearFilters}
+      />
       <div className="flowRows">
         {rows.map((row, index) => (
           <CarouselRow
-            key={row.title}
+            key={row.key}
             number={String(index + 1).padStart(2, '0')}
             title={row.title}
             subtitle={row.subtitle}
@@ -239,6 +294,10 @@ function ResultsScreen({ rows, onOpen, onLocation, geoStatus, selectedTypes, int
         <a href={`tel:${contact.phone}`}>{contact.phone}</a>
         <a href={`mailto:${contact.email}`}>{contact.email}</a>
       </footer>
+      <div className="mobileResultContactBar">
+        <a href={contact.lineUrl} target="_blank" rel="noreferrer">LINE</a>
+        <a href={`tel:${contact.phone}`}>โทร</a>
+      </div>
     </section>
   )
 }
@@ -373,14 +432,16 @@ function App() {
     : null
   const detailProperty = useMemo(() => properties.find((property) => property.slug === detailSlug), [detailSlug])
   const [theme, setTheme] = useState(() => localStorage.getItem('estate-theme') || 'light')
-  const [step, setStep] = useState('intent')
+  const [step, setStep] = useState('results')
   const [intent, setIntent] = useState('')
   const [selectedTypes, setSelectedTypes] = useState([])
+  const [priceRange, setPriceRange] = useState('all')
   const [query, setQuery] = useState('')
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [userLocation, setUserLocation] = useState(null)
   const [geoStatus, setGeoStatus] = useState('')
-  const [editVisible, setEditVisible] = useState(() => new URLSearchParams(window.location.search).get('edit') === 'true')
+  const canEditUi = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+  const [editVisible, setEditVisible] = useState(() => canEditUi && new URLSearchParams(window.location.search).get('edit') === 'true')
   const [uiSettings, setUiSettings] = useState(loadUi)
 
   useEffect(() => {
@@ -408,12 +469,13 @@ function App() {
     return enrichedProperties
       .filter((property) => !intent || property.listingType === intent)
       .filter((property) => selectedTypes.length === 0 || selectedTypes.includes(property.propertyType))
+      .filter((property) => priceMatches(property, priceRange))
       .filter((property) => {
         if (!terms.length) return true
         const text = normalize([property.title, property.location, property.propertyLabel, property.listingLabel, property.status, property.tags.join(' ')].join(' '))
         return terms.some((term) => text.includes(term))
       })
-  }, [enrichedProperties, intent, query, selectedTypes])
+  }, [enrichedProperties, intent, priceRange, query, selectedTypes])
 
   const related = useMemo(() => {
     if (!detailProperty) return featuredProperties
@@ -421,18 +483,15 @@ function App() {
   }, [detailProperty])
 
   const rows = useMemo(() => {
-    const base = filtered.length ? filtered : enrichedProperties.filter((property) => !intent || property.listingType === intent)
+    const fallback = enrichedProperties.filter((property) => (!intent || property.listingType === intent) && priceMatches(property, priceRange))
+    const base = filtered.length ? filtered : fallback
     return [
+      { key: 'recommended', title: 'แนะนำสำหรับคุณ', subtitle: 'รายการเด่นที่เหมาะกับการตัดสินใจเร็ว', items: base.filter((item) => featuredProperties.some((featured) => featured.id === item.id)).concat(base).slice(0, 18) },
       { key: 'nearby', title: 'ใกล้ฉัน', subtitle: userLocation ? 'เรียงตามระยะทางจากตำแหน่งของคุณ' : 'กดใช้พิกัดเพื่อเรียงรายการใกล้คุณ', items: [...base].sort((a, b) => (a.distance ?? 99999) - (b.distance ?? 99999)).slice(0, 18) },
       { key: 'new', title: 'เข้าใหม่', subtitle: 'รายการล่าสุดที่เพิ่มเข้าระบบ', items: [...base].sort((a, b) => b.id - a.id).slice(0, 18) },
-      { key: 'popular', title: 'เข้าชมเยอะ', subtitle: 'รายการที่ได้รับความสนใจสูง', items: [...base].sort((a, b) => b.views - a.views).slice(0, 18) },
-      { key: 'special', title: 'ราคาพิเศษ', subtitle: 'รายการน่าสนใจสำหรับตัดสินใจเร็ว', items: base.filter((item) => item.isSpecial).slice(0, 18) },
-      { key: 'home', title: 'บ้านและทาวน์โฮม', subtitle: 'เหมาะกับครอบครัวและอยู่อาศัยจริง', items: base.filter((item) => ['house', 'townhome'].includes(item.propertyType)).slice(0, 18) },
-      { key: 'business', title: 'อาคาร ที่ดิน และโกดัง', subtitle: 'เหมาะกับลงทุนหรือทำธุรกิจ', items: base.filter((item) => ['commercial', 'land', 'warehouse', 'office'].includes(item.propertyType)).slice(0, 18) },
-      { key: 'condo', title: 'คอนโดและอพาร์ตเมนต์', subtitle: 'ตัวเลือกกะทัดรัด เดินทางง่าย', items: base.filter((item) => ['condo', 'apartment'].includes(item.propertyType)).slice(0, 18) },
-      { key: 'villa', title: 'พูลวิลล่าและบ้านพัก', subtitle: 'สำหรับพักผ่อนหรือปล่อยเช่าระยะสั้น', items: base.filter((item) => item.propertyType === 'villa').slice(0, 18) },
+      { key: 'special', title: 'น่าสนใจ', subtitle: 'ราคาและสถานะที่เหมาะสำหรับนัดชม', items: base.filter((item) => item.isSpecial || item.status.includes('นัดชม')).slice(0, 18) },
     ]
-  }, [enrichedProperties, filtered, intent, userLocation])
+  }, [enrichedProperties, filtered, intent, priceRange, userLocation])
 
   const requestLocation = () => {
     if (!navigator.geolocation) {
@@ -454,6 +513,13 @@ function App() {
     setSelectedTypes((current) => current.includes(value) ? current.filter((item) => item !== value) : [...current, value])
   }
 
+  const clearFilters = () => {
+    setIntent('')
+    setSelectedTypes([])
+    setPriceRange('all')
+    setQuery('')
+  }
+
   const updateUi = (key, value) => setUiSettings((current) => ({ ...current, [key]: value }))
   const resetUi = () => setUiSettings(defaultUi)
   const toggleTheme = () => setTheme((current) => current === 'dark' ? 'light' : 'dark')
@@ -467,19 +533,34 @@ function App() {
       <TransparentSearchBar
         query={query}
         onQuery={setQuery}
-        onSearch={() => setStep(intent ? 'results' : 'intent')}
+        onSearch={() => setStep('results')}
         theme={theme}
         onTheme={toggleTheme}
         currentStep={step}
-        onBack={() => setStep(step === 'results' ? 'types' : 'intent')}
+        onBack={() => setStep('results')}
       />
 
-      {step === 'intent' && <IntentScreen onChoose={(value) => { setIntent(value); setStep('types') }} />}
-      {step === 'types' && <TypeScreen intent={intent} selectedTypes={selectedTypes} onToggleType={toggleType} onNext={() => setStep('results')} onBack={() => setStep('intent')} />}
-      {step === 'results' && <ResultsScreen rows={rows} onOpen={setSelectedProperty} onLocation={requestLocation} geoStatus={geoStatus} selectedTypes={selectedTypes} intent={intent} onChangeTypes={() => setStep('types')} />}
+      {step === 'intent' && <IntentScreen onChoose={(value) => { setIntent(value); setStep('results') }} />}
+      {step === 'types' && <TypeScreen intent={intent} selectedTypes={selectedTypes} onToggleType={toggleType} onNext={() => setStep('results')} onBack={() => setStep('results')} />}
+      {step === 'results' && (
+        <ResultsScreen
+          rows={rows}
+          onOpen={setSelectedProperty}
+          onLocation={requestLocation}
+          geoStatus={geoStatus}
+          selectedTypes={selectedTypes}
+          intent={intent}
+          onIntentChange={setIntent}
+          onToggleType={toggleType}
+          priceRange={priceRange}
+          onPriceChange={setPriceRange}
+          onClearFilters={clearFilters}
+          total={filtered.length}
+        />
+      )}
 
       <PropertyModal property={selectedProperty} onClose={() => setSelectedProperty(null)} />
-      <UiPanel visible={editVisible} settings={uiSettings} onChange={updateUi} onReset={resetUi} onClose={() => setEditVisible(false)} />
+      {canEditUi && <UiPanel visible={editVisible} settings={uiSettings} onChange={updateUi} onReset={resetUi} onClose={() => setEditVisible(false)} />}
     </main>
   )
 }
