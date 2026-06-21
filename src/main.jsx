@@ -2,12 +2,6 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import './styles.css'
-import './luxury-tune.css'
-import './geo-search.css'
-import './seo-content.css'
-import './search-safety.css'
-import './demo-density.css'
-import './minimal-home.css'
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
