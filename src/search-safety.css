@@ -1,0 +1,30 @@
+.reset-filter-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid rgba(23, 23, 23, 0.1);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--white);
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 12px 32px rgba(23, 23, 23, 0.12);
+}
+
+.reset-filter-button:hover {
+  transform: translateY(-1px);
+}
+
+.property-section .section-heading {
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .reset-filter-button {
+    width: 100%;
+  }
+}
