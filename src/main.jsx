@@ -6,6 +6,7 @@ import './luxury-tune.css'
 import './geo-search.css'
 import './seo-content.css'
 import './search-safety.css'
+import './demo-density.css'
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
