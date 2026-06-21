@@ -83,7 +83,7 @@ function applyUi(settings) {
 
 function TransparentSearchBar({ query, onQuery, onSearch, theme, onTheme, onBack, currentStep }) {
   return (
-    <header className="flowTopBar">
+    <header className={`flowTopBar step-${currentStep}`}>
       <button className="brandChip" onClick={() => window.location.assign('/')}>
         <span>AE</span>
         <strong>ALPHA ESTATE</strong>
@@ -258,7 +258,7 @@ function PropertyModal({ property, onClose }) {
           <p>{property.summary}</p>
           <div className="modalButtons">
             <button onClick={openFull}>เปิดดูข้อมูลเต็ม</button>
-            <a href={contact.lineUrl} target="_blank" rel="noreferrer">สอบถาม LINE</a>
+            <a href={contact.lineUrl} target="_blank" rel="noreferrer">LINE</a>
             <a href={`tel:${contact.phone}`}>โทร</a>
           </div>
         </div>
@@ -268,14 +268,14 @@ function PropertyModal({ property, onClose }) {
 }
 
 function DetailPage({ property, related, theme, onTheme }) {
-  const gallery = property?.gallery?.length ? property.gallery : property ? [property.image] : []
   const [activeIndex, setActiveIndex] = useState(0)
+  const gallery = property?.gallery?.length ? property.gallery : [property?.image].filter(Boolean)
 
   useEffect(() => {
-    if (!property || gallery.length < 2) return undefined
-    const timer = window.setInterval(() => setActiveIndex((index) => (index + 1) % gallery.length), 3600)
+    if (!gallery.length) return undefined
+    const timer = window.setInterval(() => setActiveIndex((current) => (current + 1) % gallery.length), 4200)
     return () => window.clearInterval(timer)
-  }, [property, gallery.length])
+  }, [gallery.length])
 
   useEffect(() => {
     if (!property) return
@@ -283,19 +283,14 @@ function DetailPage({ property, related, theme, onTheme }) {
   }, [property])
 
   if (!property) {
-    return (
-      <main className="detailShell">
-        <TransparentSearchBar query="" onQuery={() => {}} theme={theme} onTheme={onTheme} currentStep="detail" onBack={() => window.location.assign('/')} />
-        <section className="emptyDetail"><h1>ไม่พบรายการนี้</h1><a href="/">กลับหน้าแรก</a></section>
-      </main>
-    )
+    return <main className="detailShell"><section className="emptyDetail"><h1>ไม่พบข้อมูลทรัพย์นี้</h1><a href="/">กลับหน้าแรก</a></section></main>
   }
 
   return (
     <main className="detailShell">
-      <TransparentSearchBar query="" onQuery={() => {}} theme={theme} onTheme={onTheme} currentStep="detail" onBack={() => window.location.assign('/')} />
+      <TransparentSearchBar query="" onQuery={() => {}} onSearch={() => {}} theme={theme} onTheme={onTheme} currentStep="detail" onBack={() => window.location.assign('/')} />
       <section className="propertyHeroDetail">
-        <img src={gallery[activeIndex]} alt={property.title} loading="eager" />
+        <img src={gallery[activeIndex]} alt={property.title} />
         <div className="detailOverlayText">
           <span className="statusPill">{property.listingLabel}</span>
           <h1>{property.title}</h1>
@@ -303,34 +298,34 @@ function DetailPage({ property, related, theme, onTheme }) {
           <strong>{property.priceText}</strong>
         </div>
       </section>
-      <section className="detailThumbs">
+
+      <div className="detailThumbs">
         {gallery.map((image, index) => (
           <button key={image} className={index === activeIndex ? 'active' : ''} onClick={() => setActiveIndex(index)}>
             <img src={image} alt={`${property.title} ${index + 1}`} loading="lazy" />
           </button>
         ))}
-      </section>
+      </div>
+
       <section className="detailInfoGrid">
-        <article>
-          <p className="flowEyebrow">DETAILS</p>
+        <div>
+          <p className="flowEyebrow">DETAIL</p>
           <h2>รายละเอียดทรัพย์</h2>
           <p>{property.fullDescription || property.summary}</p>
-        </article>
+        </div>
         <aside>
           <span>{property.landSize}</span>
           <span>{property.usableArea}</span>
+          <span>{property.status}</span>
           {property.bedrooms > 0 && <span>{property.bedrooms} ห้องนอน</span>}
           {property.bathrooms > 0 && <span>{property.bathrooms} ห้องน้ำ</span>}
-          {property.parking > 0 && <span>จอดรถ {property.parking} คัน</span>}
           <a href={contact.lineUrl} target="_blank" rel="noreferrer">ติดต่อ LINE</a>
           <a href={`tel:${contact.phone}`}>โทร {contact.phone}</a>
         </aside>
       </section>
+
       <section className="autoRecommend">
-        <div className="flowRowHead"><div><span>+</span><div><h2>อสังหาแนะนำ</h2><p>รายการที่ใกล้เคียงกัน เลื่อนอัตโนมัติ</p></div></div></div>
-        <div className="autoTrack">
-          {[...related.slice(0, 10), ...related.slice(0, 10)].map((item, index) => <PropertyCard key={`${item.id}-${index}`} property={item} onOpen={(p) => window.open(`/property/${p.slug}`, '_blank', 'noopener,noreferrer')} />)}
-        </div>
+        <CarouselRow number="RE" title="อสังหาแนะนำ" subtitle="เลื่อนอัตโนมัติจากรายการใกล้เคียง" items={[...related, ...related].slice(0, 24)} onOpen={(item) => window.open(`/property/${item.slug}`, '_blank', 'noopener,noreferrer')} />
       </section>
     </main>
   )
@@ -340,19 +335,17 @@ function App() {
   const detailSlug = window.location.pathname.startsWith('/property/')
     ? decodeURIComponent(window.location.pathname.replace('/property/', '').replace(/\/$/, ''))
     : null
-
+  const detailProperty = useMemo(() => properties.find((property) => property.slug === detailSlug), [detailSlug])
   const [theme, setTheme] = useState(() => localStorage.getItem('estate-theme') || 'light')
-  const [uiSettings, setUiSettings] = useState(loadUi)
-  const [editVisible, setEditVisible] = useState(() => new URLSearchParams(window.location.search).get('edit') === 'true')
   const [step, setStep] = useState('intent')
-  const [intent, setIntent] = useState(null)
+  const [intent, setIntent] = useState('')
   const [selectedTypes, setSelectedTypes] = useState([])
   const [query, setQuery] = useState('')
+  const [selectedProperty, setSelectedProperty] = useState(null)
   const [userLocation, setUserLocation] = useState(null)
   const [geoStatus, setGeoStatus] = useState('')
-  const [selectedProperty, setSelectedProperty] = useState(null)
-
-  const detailProperty = useMemo(() => properties.find((item) => item.slug === detailSlug), [detailSlug])
+  const [editVisible, setEditVisible] = useState(() => new URLSearchParams(window.location.search).get('edit') === 'true')
+  const [uiSettings, setUiSettings] = useState(loadUi)
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -434,7 +427,7 @@ function App() {
   }
 
   return (
-    <main className="flowApp">
+    <main className={`flowApp flowStep-${step}`}>
       <TransparentSearchBar
         query={query}
         onQuery={setQuery}
