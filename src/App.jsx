@@ -25,6 +25,53 @@ const topLinks = [
   { href: '#contact', label: 'ติดต่อ' },
 ]
 
+const defaultUiSettings = {
+  heroHeight: 100,
+  heroTitleSize: 96,
+  heroTextWidth: 720,
+  heroCardWidth: 330,
+  overlayDarkness: 62,
+  topbarWidth: 1160,
+  topbarOpacity: 18,
+  searchWidth: 860,
+  searchPadding: 28,
+  cardWidth: 230,
+  cardImageHeight: 136,
+  sectionSpacing: 78,
+  rowGap: 46,
+}
+
+const uiGroups = [
+  {
+    title: 'Hero',
+    controls: [
+      { key: 'heroHeight', label: 'ความสูง Hero', min: 72, max: 112, step: 1, suffix: 'vh' },
+      { key: 'heroTitleSize', label: 'ขนาดหัวข้อ Hero', min: 52, max: 112, step: 1, suffix: 'px' },
+      { key: 'heroTextWidth', label: 'ความกว้างข้อความ', min: 420, max: 920, step: 10, suffix: 'px' },
+      { key: 'heroCardWidth', label: 'ความกว้างการ์ด Hero', min: 260, max: 460, step: 5, suffix: 'px' },
+      { key: 'overlayDarkness', label: 'ความเข้มภาพพื้นหลัง', min: 25, max: 78, step: 1, suffix: '%' },
+    ],
+  },
+  {
+    title: 'Top Bar / Search',
+    controls: [
+      { key: 'topbarWidth', label: 'ความกว้างแถบบน', min: 760, max: 1320, step: 10, suffix: 'px' },
+      { key: 'topbarOpacity', label: 'ความโปร่งใสแถบบน', min: 8, max: 70, step: 1, suffix: '%' },
+      { key: 'searchWidth', label: 'ความกว้างกล่องค้นหา', min: 620, max: 1180, step: 10, suffix: 'px' },
+      { key: 'searchPadding', label: 'ช่องไฟในกล่องค้นหา', min: 14, max: 44, step: 1, suffix: 'px' },
+    ],
+  },
+  {
+    title: 'Carousel / Spacing',
+    controls: [
+      { key: 'cardWidth', label: 'ความกว้างการ์ดเล็ก', min: 160, max: 320, step: 5, suffix: 'px' },
+      { key: 'cardImageHeight', label: 'ความสูงรูปการ์ด', min: 90, max: 220, step: 5, suffix: 'px' },
+      { key: 'sectionSpacing', label: 'ระยะห่างแต่ละส่วน', min: 36, max: 128, step: 2, suffix: 'px' },
+      { key: 'rowGap', label: 'ช่องไฟระหว่างแถว Carousel', min: 18, max: 88, step: 2, suffix: 'px' },
+    ],
+  },
+]
+
 const aliases = [
   { match: ['บ้านขาย', 'ซื้อบ้าน', 'บ้านพร้อมอยู่'], terms: ['บ้าน', 'บ้านเดี่ยว', 'ทาวน์โฮม', 'ขาย', 'ซื้อ'] },
   { match: ['บ้านเช่า', 'เช่าบ้าน'], terms: ['บ้าน', 'บ้านเดี่ยว', 'ทาวน์โฮม', 'เช่า', 'ให้เช่า'] },
@@ -40,6 +87,32 @@ const aliases = [
 
 const normalize = (value) => String(value ?? '').toLowerCase().replace(/\s+/g, '')
 const toRad = (value) => (value * Math.PI) / 180
+
+const loadUiSettings = () => {
+  try {
+    const saved = window.localStorage.getItem('estate-ui-settings')
+    return saved ? { ...defaultUiSettings, ...JSON.parse(saved) } : defaultUiSettings
+  } catch {
+    return defaultUiSettings
+  }
+}
+
+const applyUiSettings = (settings) => {
+  const root = document.documentElement
+  root.style.setProperty('--ui-hero-height', `${settings.heroHeight}vh`)
+  root.style.setProperty('--ui-hero-title-size', `${settings.heroTitleSize}px`)
+  root.style.setProperty('--ui-hero-text-width', `${settings.heroTextWidth}px`)
+  root.style.setProperty('--ui-hero-card-width', `${settings.heroCardWidth}px`)
+  root.style.setProperty('--ui-overlay-darkness', `${settings.overlayDarkness / 100}`)
+  root.style.setProperty('--ui-topbar-width', `${settings.topbarWidth}px`)
+  root.style.setProperty('--ui-topbar-opacity', `${settings.topbarOpacity / 100}`)
+  root.style.setProperty('--ui-search-width', `${settings.searchWidth}px`)
+  root.style.setProperty('--ui-search-padding', `${settings.searchPadding}px`)
+  root.style.setProperty('--ui-card-width', `${settings.cardWidth}px`)
+  root.style.setProperty('--ui-card-img-height', `${settings.cardImageHeight}px`)
+  root.style.setProperty('--ui-section-spacing', `${settings.sectionSpacing}px`)
+  root.style.setProperty('--ui-row-gap', `${settings.rowGap}px`)
+}
 
 const getDistanceKm = (from, to) => {
   const radius = 6371
@@ -69,6 +142,57 @@ const formatDate = () => new Intl.DateTimeFormat('th-TH', {
   month: 'short',
   year: 'numeric',
 }).format(new Date())
+
+function RangeControl({ control, value, onChange }) {
+  return (
+    <label className="rangeControl">
+      <span>
+        {control.label}
+        <b>{value}{control.suffix}</b>
+      </span>
+      <input
+        type="range"
+        min={control.min}
+        max={control.max}
+        step={control.step}
+        value={value}
+        onChange={(event) => onChange(control.key, event.target.value)}
+      />
+    </label>
+  )
+}
+
+function UIEditPanel({ settings, onChange, onReset, onClose }) {
+  return (
+    <aside className="uiEditor" aria-label="UI design tuning panel">
+      <div className="editorHeader">
+        <div>
+          <p>UI EDIT MODE</p>
+          <h2>ปรับหน้าตาแบบสด</h2>
+        </div>
+        <button onClick={onClose} aria-label="ซ่อนแผงแก้ไข">×</button>
+      </div>
+      <p className="editorHint">เลื่อนสไลเดอร์แล้วดูผลทันที ค่าจะบันทึกในเครื่องนี้อัตโนมัติ</p>
+      {uiGroups.map((group) => (
+        <section className="editorGroup" key={group.title}>
+          <h3>{group.title}</h3>
+          {group.controls.map((control) => (
+            <RangeControl
+              key={control.key}
+              control={control}
+              value={settings[control.key]}
+              onChange={onChange}
+            />
+          ))}
+        </section>
+      ))}
+      <div className="editorActions">
+        <button onClick={onReset}>รีเซ็ตค่าเริ่มต้น</button>
+        <a href={window.location.pathname}>ออกจากโหมดแก้ไข</a>
+      </div>
+    </aside>
+  )
+}
 
 function TopBar({ theme, onToggleTheme, scrolled }) {
   return (
@@ -252,7 +376,10 @@ function App() {
     [detailSlug],
   )
 
+  const isEditMode = useMemo(() => new URLSearchParams(window.location.search).get('edit') === 'true', [])
   const [theme, setTheme] = useState(() => localStorage.getItem('estate-theme') || 'light')
+  const [uiSettings, setUiSettings] = useState(loadUiSettings)
+  const [isPanelOpen, setIsPanelOpen] = useState(true)
   const [heroProperty] = useState(() => featuredProperties[Math.floor(Math.random() * featuredProperties.length)] || properties[0])
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [listingMode, setListingMode] = useState('all')
@@ -268,6 +395,11 @@ function App() {
   }, [theme])
 
   useEffect(() => {
+    applyUiSettings(uiSettings)
+    localStorage.setItem('estate-ui-settings', JSON.stringify(uiSettings))
+  }, [uiSettings])
+
+  useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 72)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -278,6 +410,24 @@ function App() {
     if (detailSlug) return
     document.title = 'ALPHA ESTATE | ค้นหาบ้าน ที่ดิน และอสังหาริมทรัพย์ทำเลดี'
   }, [detailSlug])
+
+  const updateUiSetting = (key, value) => {
+    setUiSettings((current) => ({ ...current, [key]: Number(value) }))
+  }
+
+  const resetUiSettings = () => {
+    localStorage.removeItem('estate-ui-settings')
+    setUiSettings(defaultUiSettings)
+  }
+
+  const editor = isEditMode && isPanelOpen ? (
+    <UIEditPanel
+      settings={uiSettings}
+      onChange={updateUiSetting}
+      onReset={resetUiSettings}
+      onClose={() => setIsPanelOpen(false)}
+    />
+  ) : null
 
   const filteredProperties = useMemo(() => {
     const terms = buildTerms(keyword)
@@ -358,12 +508,15 @@ function App() {
 
   if (detailSlug) {
     return (
-      <PropertyDetailPage
-        property={detailProperty}
-        theme={theme}
-        toggleTheme={toggleTheme}
-        scrolled={isScrolled}
-      />
+      <>
+        <PropertyDetailPage
+          property={detailProperty}
+          theme={theme}
+          toggleTheme={toggleTheme}
+          scrolled={isScrolled}
+        />
+        {editor}
+      </>
     )
   }
 
@@ -470,6 +623,7 @@ function App() {
       </nav>
 
       <PropertyModal property={selectedProperty} onClose={() => setSelectedProperty(null)} />
+      {editor}
     </main>
   )
 }
