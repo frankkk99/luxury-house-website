@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="ALPHA ESTATE บ้านขาย บ้านเช่า โคราช">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#14110d"/>
+      <stop offset="0.55" stop-color="#2a241c"/>
+      <stop offset="1" stop-color="#d4b16a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="68%" cy="36%" r="60%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <path d="M742 406L910 250l168 156v98H972v-73H848v73H742v-98z" fill="#f6efe4" opacity="0.9"/>
+  <path d="M797 388l113-106 113 106" fill="none" stroke="#caa65f" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="88" y="138" fill="#caa65f" font-family="Arial, sans-serif" font-size="30" letter-spacing="8">ALPHA ESTATE</text>
+  <text x="86" y="248" fill="#fffaf2" font-family="Arial, sans-serif" font-size="72" font-weight="700">บ้านขาย บ้านเช่า</text>
+  <text x="86" y="336" fill="#fffaf2" font-family="Arial, sans-serif" font-size="72" font-weight="700">โคราช</text>
+  <text x="90" y="417" fill="#efe3cf" font-family="Arial, sans-serif" font-size="32">บ้านเดี่ยว · ทาวน์โฮม · ที่ดินเปล่า · อาคารพาณิชย์</text>
+  <text x="90" y="484" fill="#efe3cf" font-family="Arial, sans-serif" font-size="28">ค้นหาตามทำเล ใช้พิกัดใกล้คุณ และนัดชมบ้านได้ทันที</text>
+</svg>
