@@ -5,6 +5,7 @@ import './styles.css'
 import './luxury-tune.css'
 import './geo-search.css'
 import './seo-content.css'
+import './search-safety.css'
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
