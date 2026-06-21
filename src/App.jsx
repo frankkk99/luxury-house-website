@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { featuredProperties, properties, propertyTypes } from './data/properties.js'
 
 const contact = {
@@ -233,18 +233,51 @@ function ResultsScreen({ rows, onOpen, onLocation, geoStatus, selectedTypes, int
           />
         ))}
       </div>
+      <footer className="resultsContactFooter">
+        <span>ALPHA ESTATE</span>
+        <a href={contact.lineUrl} target="_blank" rel="noreferrer">LINE</a>
+        <a href={`tel:${contact.phone}`}>{contact.phone}</a>
+        <a href={`mailto:${contact.email}`}>{contact.email}</a>
+      </footer>
     </section>
   )
 }
 
 function PropertyModal({ property, onClose }) {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const touchStartX = useRef(null)
+  const gallery = property?.gallery?.length ? property.gallery : property ? [property.image].filter(Boolean) : []
+
+  useEffect(() => {
+    setActiveIndex(0)
+  }, [property?.id])
+
   if (!property) return null
+
   const openFull = () => window.open(`/property/${property.slug}`, '_blank', 'noopener,noreferrer')
+  const goTo = (direction) => setActiveIndex((current) => (current + direction + gallery.length) % gallery.length)
+  const onTouchStart = (event) => { touchStartX.current = event.touches[0].clientX }
+  const onTouchEnd = (event) => {
+    if (touchStartX.current === null || gallery.length < 2) return
+    const diff = touchStartX.current - event.changedTouches[0].clientX
+    if (Math.abs(diff) > 36) goTo(diff > 0 ? 1 : -1)
+    touchStartX.current = null
+  }
+
   return (
     <div className="flowModalBackdrop" role="dialog" aria-modal="true" onClick={onClose}>
       <article className="flowModal" onClick={(event) => event.stopPropagation()}>
         <button className="flowClose" onClick={onClose}>×</button>
-        <img src={property.image} alt={property.title} loading="lazy" />
+        <div className="modalImageStage" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+          <img src={gallery[activeIndex]} alt={property.title} loading="lazy" />
+          {gallery.length > 1 && (
+            <>
+              <button className="modalNav prev" onClick={() => goTo(-1)} aria-label="รูปก่อนหน้า">‹</button>
+              <button className="modalNav next" onClick={() => goTo(1)} aria-label="รูปถัดไป">›</button>
+              <div className="modalDots">{gallery.map((image, index) => <button key={image} className={index === activeIndex ? 'active' : ''} onClick={() => setActiveIndex(index)} aria-label={`ดูรูป ${index + 1}`} />)}</div>
+            </>
+          )}
+        </div>
         <div className="flowModalContent">
           <span className="statusPill">{property.listingLabel}</span>
           <h2>{property.title}</h2>
@@ -287,7 +320,7 @@ function DetailPage({ property, related, theme, onTheme }) {
   }
 
   return (
-    <main className="detailShell">
+    <main className="detailShell compactDetailShell">
       <TransparentSearchBar query="" onQuery={() => {}} onSearch={() => {}} theme={theme} onTheme={onTheme} currentStep="detail" onBack={() => window.location.assign('/')} />
       <section className="propertyHeroDetail">
         <img src={gallery[activeIndex]} alt={property.title} />
@@ -319,14 +352,17 @@ function DetailPage({ property, related, theme, onTheme }) {
           <span>{property.status}</span>
           {property.bedrooms > 0 && <span>{property.bedrooms} ห้องนอน</span>}
           {property.bathrooms > 0 && <span>{property.bathrooms} ห้องน้ำ</span>}
-          <a href={contact.lineUrl} target="_blank" rel="noreferrer">ติดต่อ LINE</a>
-          <a href={`tel:${contact.phone}`}>โทร {contact.phone}</a>
         </aside>
       </section>
 
       <section className="autoRecommend">
         <CarouselRow number="RE" title="อสังหาแนะนำ" subtitle="เลื่อนอัตโนมัติจากรายการใกล้เคียง" items={[...related, ...related].slice(0, 24)} onOpen={(item) => window.open(`/property/${item.slug}`, '_blank', 'noopener,noreferrer')} />
       </section>
+
+      <footer className="detailStickyContact">
+        <a href={contact.lineUrl} target="_blank" rel="noreferrer">ติดต่อ LINE</a>
+        <a href={`tel:${contact.phone}`}>โทร {contact.phone}</a>
+      </footer>
     </main>
   )
 }
