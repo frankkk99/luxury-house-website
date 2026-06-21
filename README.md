@@ -1,63 +1,40 @@
-# Luxury House Website
+# ALPHA ESTATE — Luxury House Website V2
 
-เว็บไซต์ขายบ้านสไตล์เรียบหรู เน้นโชว์ภาพ รายละเอียดบ้าน ทำเล แกลเลอรี และช่องทางติดต่อสำหรับผู้สนใจ
+เว็บเดโมอสังหาริมทรัพย์สไตล์เรียบหรู เน้นพื้นที่โล่ง ภาพใหญ่ ข้อมูลสำคัญ และ flow ใช้งานง่ายสำหรับนำเสนอขายงานให้ลูกค้า
 
-## แนวคิดหลัก
+## ฟีเจอร์ล่าสุด
 
-- ภาพบ้านขนาดใหญ่ตั้งแต่หน้าแรก
-- โทนเรียบหรู ขาว ดำ ครีม และทองหม่น
-- ข้อมูลบ้านอ่านง่าย เช่น ราคา ทำเล ห้องนอน ห้องน้ำ พื้นที่ใช้สอย
-- มีปุ่มติดต่อชัดเจนทั้ง โทร, LINE และฟอร์มนัดชมบ้าน
-- รองรับมือถือ พร้อมแถบปุ่มติดต่อแบบ sticky ด้านล่าง
+- Hero สุ่มรายการอสังหาทุกครั้งที่เปิดเว็บ
+- การ์ดข้อมูลสั้นบน Hero พร้อมปุ่มดูรายละเอียด
+- หน้าแรกโล่ง ลด section ที่ไม่จำเป็น
+- Bottom navigation แบบโปร่งใส และเข้มขึ้นเมื่อผู้ใช้เลื่อนหน้า
+- ระบบเลือก ทั้งหมด / ซื้อ / เช่า
+- กรองประเภทอสังหา เช่น บ้านเดี่ยว ทาวน์โฮม อาคาร ที่ดิน คอนโด โกดัง ออฟฟิศ อพาร์ตเมนต์ พูลวิลล่า
+- ใช้พิกัดจากเครื่องผู้ใช้เพื่อเรียงรายการใกล้ก่อน
+- ข้อมูลตัวอย่าง 200 รายการ สำหรับทดสอบและเดโม
+- SEO metadata, Open Graph, robots.txt และ sitemap.xml
 
-## Tech Stack
-
-- React
-- Vite
-- CSS Responsive Layout
-- Lucide React Icons
-
-## วิธีรันโปรเจกต์
+## วิธีรันในเครื่อง
 
 ```bash
 npm install
 npm run dev
 ```
 
-## วิธี build
+## วิธี Deploy บน Vercel
 
-```bash
-npm run build
-```
+- Framework Preset: `Vite`
+- Build Command: `npm run build`
+- Output Directory: `dist`
 
-## Deploy บน Vercel
+## ไฟล์สำคัญ
 
-1. เข้า Vercel
-2. กด Add New Project
-3. เลือก repo `luxury-house-website`
-4. Framework Preset เลือก Vite
-5. Build Command ใช้ `npm run build`
-6. Output Directory ใช้ `dist`
-7. กด Deploy
+- `src/App.jsx` — หน้าเว็บหลักและ logic การค้นหา
+- `src/data/properties.js` — ข้อมูลอสังหาตัวอย่าง 200 รายการ
+- `src/styles.css` — ดีไซน์ V2 ทั้งหมด
+- `index.html` — SEO metadata
+- `public/robots.txt` และ `public/sitemap.xml` — ไฟล์สำหรับ search engine
 
-## จุดที่ควรเปลี่ยนเป็นข้อมูลจริง
+## หมายเหตุ
 
-ในไฟล์ `src/App.jsx`
-
-- เปลี่ยนเบอร์โทรในตัวแปร `contact.phone`
-- เปลี่ยนลิงก์ LINE ในตัวแปร `contact.lineUrl`
-- เปลี่ยนอีเมลในตัวแปร `contact.email`
-- เปลี่ยนข้อมูลบ้านใน array `properties`
-- เปลี่ยนรูปภาพบ้านจริงแทนภาพตัวอย่างจาก Unsplash
-- เปลี่ยนสถานที่ใกล้เคียงใน array `nearby`
-
-## โครง Section หน้าเว็บ
-
-1. Hero Section
-2. Selected Properties
-3. Image Gallery
-4. Property Detail
-5. Selling Points
-6. Location
-7. Contact / Book a Visit
-8. Sticky CTA สำหรับมือถือ
+ข้อมูล 200 รายการเป็น mock data สำหรับเดโม ไม่ใช่ประกาศจริง ก่อนใช้งานจริงควรเปลี่ยนเบอร์ LINE Email รูปภาพ และรายการอสังหาเป็นข้อมูลลูกค้าจริง
