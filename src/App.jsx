@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import { featuredProperties, properties, propertyTypes } from './data/properties.js'
 
+const SITE_URL = 'https://luxury-house-website.vercel.app'
+
 const contact = {
-  phone: '098-000-0000',
-  lineUrl: 'https://line.me/R/ti/p/@yourlineid',
-  email: 'sales@example.com',
+  brand: 'Frank Creative / AlphaLab',
+  name: 'แฟรงค์ เจตน์สฤษฎิ์',
+  phone: '080-899-8155',
+  email: 'am2.production29@gmail.com',
+  lineUrl: 'https://line.me/R/ti/p/@alphalab.official.th',
+  portfolio: 'https://www.frankcreative.site/',
 }
 
 const listingModes = [
@@ -13,10 +18,10 @@ const listingModes = [
   { value: 'rent', label: 'เช่า' },
 ]
 
-const bottomLinks = [
+const topLinks = [
   { href: '#home', label: 'หน้าแรก' },
   { href: '#search', label: 'ค้นหา' },
-  { href: '#properties', label: 'ทรัพย์' },
+  { href: '#collections', label: 'แนะนำ' },
   { href: '#contact', label: 'ติดต่อ' },
 ]
 
@@ -59,7 +64,195 @@ const buildTerms = (keyword) => {
   return Array.from(terms).map(normalize).filter((term) => term.length > 1)
 }
 
+const formatDate = () => new Intl.DateTimeFormat('th-TH', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+}).format(new Date())
+
+function TopBar({ theme, onToggleTheme, scrolled }) {
+  return (
+    <header className={`topBar ${scrolled ? 'scrolled' : ''}`}>
+      <a className="brandMark" href="/">
+        <span>AE</span>
+        <div>
+          <strong>ALPHA ESTATE</strong>
+          <small>Luxury listing system</small>
+        </div>
+      </a>
+      <nav className="topNav" aria-label="Primary">
+        {topLinks.map((item) => (
+          <a key={item.href} href={item.href}>{item.label}</a>
+        ))}
+      </nav>
+      <div className="topActions">
+        <button className="themeToggle" onClick={onToggleTheme} aria-label="Toggle theme">
+          {theme === 'dark' ? 'โหมดสว่าง' : 'โหมดมืด'}
+        </button>
+        <a className="navCta" href={`tel:${contact.phone}`}>โทร</a>
+      </div>
+    </header>
+  )
+}
+
+function PropertyMiniCard({ property, onOpen }) {
+  return (
+    <article className="miniProperty">
+      <button className="miniPoster" onClick={() => onOpen(property)} aria-label={`ดูข้อมูล ${property.title}`}>
+        <img src={property.image} alt={`${property.propertyLabel} ${property.location}`} loading="lazy" />
+        <span>{property.listingLabel}</span>
+      </button>
+      <div className="miniInfo">
+        <small>{property.propertyLabel} · {property.location}</small>
+        <h3>{property.title}</h3>
+        <strong>{property.priceText}</strong>
+        <p>{property.bedrooms ? `${property.bedrooms} ห้องนอน · ` : ''}{property.landSize}</p>
+      </div>
+    </article>
+  )
+}
+
+function PropertyCarousel({ title, subtitle, items, onOpen }) {
+  if (!items.length) return null
+  return (
+    <section className="carouselSection" aria-label={title}>
+      <div className="rowHead">
+        <div>
+          <p className="eyebrow">CURATED ROW</p>
+          <h2>{title}</h2>
+        </div>
+        <span>{subtitle}</span>
+      </div>
+      <div className="netflixRow">
+        {items.map((property) => (
+          <PropertyMiniCard key={property.id} property={property} onOpen={onOpen} />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function PropertyModal({ property, onClose }) {
+  if (!property) return null
+
+  const openFull = () => {
+    window.open(`/property/${property.slug}`, '_blank', 'noopener,noreferrer')
+  }
+
+  return (
+    <div className="modalBackdrop" role="dialog" aria-modal="true" onClick={onClose}>
+      <article className="propertyModal" onClick={(event) => event.stopPropagation()}>
+        <button className="closeBtn" onClick={onClose} aria-label="ปิด">×</button>
+        <div className="modalImage">
+          <img src={property.image} alt={property.title} loading="lazy" />
+        </div>
+        <div className="modalContent">
+          <span className="pill">{property.listingLabel}</span>
+          <h2>{property.title}</h2>
+          <p>{property.location} · {property.propertyLabel}</p>
+          <strong>{property.priceText}</strong>
+          <div className="modalFacts">
+            <span>{property.landSize}</span>
+            <span>{property.usableArea}</span>
+            <span>{property.status}</span>
+            {property.parking > 0 && <span>จอดรถ {property.parking} คัน</span>}
+          </div>
+          <p>{property.summary}</p>
+          <div className="modalActions">
+            <button className="primaryDark" onClick={openFull}>ดูข้อมูลเต็มในหน้าต่างใหม่</button>
+            <a href={contact.lineUrl} target="_blank" rel="noreferrer">สอบถาม LINE</a>
+            <a href={`tel:${contact.phone}`}>โทร {contact.phone}</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  )
+}
+
+function PropertyDetailPage({ property, theme, toggleTheme, scrolled }) {
+  const [activeImage, setActiveImage] = useState(property?.image)
+
+  useEffect(() => {
+    if (!property) return
+    document.title = `${property.title} | ${property.priceText} | ALPHA ESTATE`
+    const description = `${property.listingLabel} ${property.propertyLabel} ${property.location} ราคา ${property.priceText} พร้อมข้อมูลครบและช่องทางติดต่อ`
+    const meta = document.querySelector('meta[name="description"]')
+    if (meta) meta.setAttribute('content', description)
+  }, [property])
+
+  if (!property) {
+    return (
+      <main className="detailPage notFound">
+        <TopBar theme={theme} onToggleTheme={toggleTheme} scrolled={scrolled} />
+        <section className="emptyDetail">
+          <p className="eyebrow">NOT FOUND</p>
+          <h1>ไม่พบข้อมูลทรัพย์นี้</h1>
+          <a className="primaryBtn darkText" href="/">กลับหน้าแรก</a>
+        </section>
+      </main>
+    )
+  }
+
+  const gallery = property.gallery?.length ? property.gallery : [property.image]
+
+  return (
+    <main className="detailPage">
+      <TopBar theme={theme} onToggleTheme={toggleTheme} scrolled={scrolled} />
+      <section className="detailHero">
+        <div className="detailGallery">
+          <img className="detailMainImage" src={activeImage || property.image} alt={property.title} loading="eager" />
+          <div className="thumbRow">
+            {gallery.map((image) => (
+              <button key={image} onClick={() => setActiveImage(image)} className={activeImage === image ? 'active' : ''}>
+                <img src={image} alt={`${property.title} gallery`} loading="lazy" />
+              </button>
+            ))}
+          </div>
+        </div>
+        <article className="detailPanel">
+          <span className="pill">{property.listingLabel}</span>
+          <h1>{property.title}</h1>
+          <p>{property.location} · {property.propertyLabel}</p>
+          <strong>{property.priceText}</strong>
+          <div className="modalFacts">
+            <span>{property.landSize}</span>
+            <span>{property.usableArea}</span>
+            <span>{property.status}</span>
+            {property.bedrooms > 0 && <span>{property.bedrooms} ห้องนอน</span>}
+            {property.bathrooms > 0 && <span>{property.bathrooms} ห้องน้ำ</span>}
+            {property.parking > 0 && <span>จอดรถ {property.parking} คัน</span>}
+          </div>
+          <p>{property.fullDescription || property.summary}</p>
+          <div className="detailContact">
+            <a href={contact.lineUrl} target="_blank" rel="noreferrer">ติดต่อ LINE</a>
+            <a href={`tel:${contact.phone}`}>โทร {contact.phone}</a>
+            <a href={`mailto:${contact.email}`}>อีเมล</a>
+          </div>
+        </article>
+      </section>
+      <section className="seoDetailCopy">
+        <p className="eyebrow">SEO DETAIL</p>
+        <h2>{property.propertyLabel} {property.location} สำหรับ{property.listingLabel}</h2>
+        <p>
+          หน้านี้ถูกออกแบบให้มี URL แยกสำหรับแต่ละทรัพย์ รองรับการแชร์ลิงก์ ยิงแอด และทำ SEO รายการอสังหา
+          โดยมีข้อมูลราคา ทำเล ประเภท พื้นที่ รูปภาพ และช่องทางติดต่อครบในหน้าเดียว
+        </p>
+      </section>
+    </main>
+  )
+}
+
 function App() {
+  const detailSlug = window.location.pathname.startsWith('/property/')
+    ? decodeURIComponent(window.location.pathname.replace('/property/', '').replace(/\/$/, ''))
+    : null
+
+  const detailProperty = useMemo(
+    () => properties.find((property) => property.slug === detailSlug),
+    [detailSlug],
+  )
+
+  const [theme, setTheme] = useState(() => localStorage.getItem('estate-theme') || 'light')
   const [heroProperty] = useState(() => featuredProperties[Math.floor(Math.random() * featuredProperties.length)] || properties[0])
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [listingMode, setListingMode] = useState('all')
@@ -70,11 +263,21 @@ function App() {
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 80)
+    document.documentElement.dataset.theme = theme
+    localStorage.setItem('estate-theme', theme)
+  }, [theme])
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 72)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+    if (detailSlug) return
+    document.title = 'ALPHA ESTATE | เว็บอสังหาเรียบหรู พร้อมระบบค้นหา พิกัด และ SEO'
+  }, [detailSlug])
 
   const filteredProperties = useMemo(() => {
     const terms = buildTerms(keyword)
@@ -106,7 +309,28 @@ function App() {
     return base.length > 0 ? base : properties.slice(0, 24)
   }, [keyword, listingMode, propertyType, userLocation])
 
-  const visibleProperties = filteredProperties.slice(0, 60)
+  const collections = useMemo(() => [
+    {
+      title: 'ทรัพย์แนะนำเปิดดูไว',
+      subtitle: 'รายการเด่นแบบ carousel',
+      items: filteredProperties.slice(0, 18),
+    },
+    {
+      title: 'บ้านและทาวน์โฮม',
+      subtitle: 'เหมาะกับลูกค้าครอบครัว',
+      items: filteredProperties.filter((item) => ['house', 'townhome'].includes(item.propertyType)).slice(0, 18),
+    },
+    {
+      title: 'ที่ดิน อาคาร และโกดัง',
+      subtitle: 'สำหรับลงทุนและธุรกิจ',
+      items: filteredProperties.filter((item) => ['land', 'commercial', 'warehouse', 'office'].includes(item.propertyType)).slice(0, 18),
+    },
+    {
+      title: 'เช่าอยู่หรือทำธุรกิจ',
+      subtitle: 'รายการเช่าดูง่าย',
+      items: filteredProperties.filter((item) => item.listingType === 'rent').slice(0, 18),
+    },
+  ], [filteredProperties])
 
   const requestLocation = () => {
     if (!navigator.geolocation) {
@@ -130,129 +354,123 @@ function App() {
     setKeyword('')
   }
 
+  const toggleTheme = () => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))
+
+  if (detailSlug) {
+    return (
+      <PropertyDetailPage
+        property={detailProperty}
+        theme={theme}
+        toggleTheme={toggleTheme}
+        scrolled={isScrolled}
+      />
+    )
+  }
+
   return (
     <main>
+      <TopBar theme={theme} onToggleTheme={toggleTheme} scrolled={isScrolled} />
+
       <section id="home" className="hero" style={{ '--hero-image': `url(${heroProperty.image})` }}>
         <div className="heroOverlay" />
         <div className="heroContent">
           <div className="heroCopy">
-            <p className="eyebrow">ALPHA ESTATE SHOWCASE</p>
-            <h1>อสังหาเด่นแบบสุ่ม ทุกครั้งที่เปิดเว็บ</h1>
-            <p className="heroLead">หน้าแรกเน้นพื้นที่โล่ง ภาพใหญ่ และข้อมูลสำคัญเท่านั้น ส่วนรายละเอียดให้กดดูต่อเพื่อไม่ให้เว็บแออัด</p>
+            <p className="eyebrow">RANDOM FEATURED LISTING · {formatDate()}</p>
+            <h1>หาอสังหาแบบโล่งๆ เห็นภาพก่อน ตัดสินใจง่ายกว่า</h1>
+            <p className="heroLead">
+              เว็บเดโมอสังหาสไตล์หรู โปร่ง และเน้น flow ใช้งานจริง แสดงเฉพาะข้อมูลสำคัญบนหน้าแรก
+              ส่วนรายละเอียดเชิงลึกเปิดดูใน modal หรือหน้าเต็มแยกได้ทันที
+            </p>
             <div className="heroActions">
-              <a href="#search" className="primaryBtn">ค้นหาอสังหา</a>
-              <button className="ghostBtn" onClick={() => setSelectedProperty(heroProperty)}>ดูข้อมูลทรัพย์นี้</button>
+              <a href="#search" className="primaryBtn">เริ่มค้นหา</a>
+              <button className="ghostBtn" onClick={() => setSelectedProperty(heroProperty)}>ดูทรัพย์สุ่มนี้</button>
             </div>
           </div>
 
           <article className="heroCard">
             <span className="pill">{heroProperty.listingLabel}</span>
             <h2>{heroProperty.title}</h2>
-            <p>{heroProperty.location}</p>
+            <p>{heroProperty.location} · {heroProperty.propertyLabel}</p>
             <strong>{heroProperty.priceText}</strong>
             <div className="miniFacts">
-              <span>{heroProperty.propertyLabel}</span>
               <span>{heroProperty.landSize}</span>
               <span>{heroProperty.status}</span>
+              <span>{heroProperty.usableArea}</span>
             </div>
-            <button onClick={() => setSelectedProperty(heroProperty)}>ดูข้อมูลสั้น</button>
+            <div className="heroCardActions">
+              <button onClick={() => setSelectedProperty(heroProperty)}>ดูข้อมูลสั้น</button>
+              <button onClick={() => window.open(`/property/${heroProperty.slug}`, '_blank', 'noopener,noreferrer')} className="subtleBtn">เปิดหน้าเต็ม</button>
+            </div>
           </article>
         </div>
       </section>
 
       <section id="search" className="searchPanel">
         <div className="sectionHead compact">
-          <p className="eyebrow">SEARCH FLOW</p>
-          <h2>เลือกเช่า ซื้อ หรือดูทั้งหมด</h2>
-          <p>กรองเท่าที่จำเป็นก่อน แล้วค่อยให้ผู้ใช้จิ้มดูรายละเอียดเพิ่ม</p>
+          <p className="eyebrow">SMART SEARCH</p>
+          <h2>ค้นหาเท่าที่จำเป็น แล้วปล่อยให้ภาพขายแทน</h2>
+          <p>เลือกซื้อ เช่า หรือทั้งหมด กรองประเภท และใช้พิกัดจากเครื่องได้โดยไม่ทำให้หน้าแรกแน่นเกินไป</p>
         </div>
+
         <div className="filterGlass">
           <div className="segmented">
             {listingModes.map((mode) => (
-              <button key={mode.value} className={listingMode === mode.value ? 'active' : ''} onClick={() => setListingMode(mode.value)}>{mode.label}</button>
+              <button key={mode.value} className={listingMode === mode.value ? 'active' : ''} onClick={() => setListingMode(mode.value)}>
+                {mode.label}
+              </button>
             ))}
           </div>
+
           <input value={keyword} onChange={(event) => setKeyword(event.target.value)} placeholder="ค้นหาทำเล เช่น โคราช เขาใหญ่ โกดังให้เช่า บ้านใกล้ฉัน" />
+
           <div className="typeChips">
             {propertyTypes.map((type) => (
-              <button key={type.value} className={propertyType === type.value ? 'active' : ''} onClick={() => setPropertyType(type.value)}>{type.label}</button>
+              <button key={type.value} className={propertyType === type.value ? 'active' : ''} onClick={() => setPropertyType(type.value)}>
+                {type.label}
+              </button>
             ))}
           </div>
+
           <div className="filterActions">
             <button onClick={requestLocation} className="locationBtn">ใช้พิกัดของฉัน</button>
             <button onClick={clearFilters} className="clearBtn">ล้างตัวกรอง</button>
-            <span>{geoStatus}</span>
+            <span>{geoStatus || `พบ ${filteredProperties.length} รายการจากข้อมูลเดโม 200 ชุด`}</span>
           </div>
         </div>
       </section>
 
-      <section id="properties" className="propertySection">
-        <div className="sectionHead">
-          <p className="eyebrow">PROPERTY LIST</p>
-          <h2>พบ {filteredProperties.length} รายการจากข้อมูลเดโม 200 ชุด</h2>
-          <p>แสดงตัวอย่าง 60 รายการแรก เพื่อให้หน้าโหลดเร็วและยังดูโล่ง</p>
-        </div>
-        <div className="propertyGrid">
-          {visibleProperties.map((property) => (
-            <article className="propertyCard" key={property.id}>
-              <button className="imageButton" onClick={() => setSelectedProperty(property)}>
-                <img src={property.image} alt={`${property.propertyLabel} ${property.location}`} loading="lazy" />
-                <span>{property.listingLabel}</span>
-              </button>
-              <div className="cardBody">
-                <small>{property.propertyLabel} · {property.location}</small>
-                <h3>{property.title}</h3>
-                <strong>{property.priceText}</strong>
-                <p>{property.bedrooms ? `${property.bedrooms} ห้องนอน · ` : ''}{property.bathrooms ? `${property.bathrooms} ห้องน้ำ · ` : ''}{property.landSize}</p>
-                {property.distance !== null && <p className="distance">ห่างจากคุณประมาณ {property.distance} กม.</p>}
-                <button onClick={() => setSelectedProperty(property)}>ดูรายละเอียด</button>
-              </div>
-            </article>
-          ))}
-        </div>
+      <section id="collections" className="collectionWrap">
+        {collections.map((row) => (
+          <PropertyCarousel key={row.title} title={row.title} subtitle={row.subtitle} items={row.items} onOpen={setSelectedProperty} />
+        ))}
       </section>
 
       <section id="contact" className="contactSection">
         <div>
-          <p className="eyebrow">CONTACT</p>
-          <h2>สนใจทรัพย์ไหน ให้ผู้ใช้ติดต่อได้ทันที</h2>
-          <p>หน้าเว็บเดโมนี้วางปุ่มโทร LINE และฟอร์มติดต่อไว้เฉพาะจุดสำคัญ เพื่อลดความแออัดของหน้าแรก</p>
+          <p className="eyebrow">CONTACT SYSTEM</p>
+          <h2>ช่องทางติดต่อชัด แต่ไม่แออัดหน้าแรก</h2>
+          <p>
+            ปุ่มโทร LINE อีเมล และ portfolio ถูกวางไว้เฉพาะจุดที่ผู้ใช้พร้อมตัดสินใจ
+            เพื่อให้เว็บดูโปร่งและยังปิดการติดต่อได้ไว
+          </p>
         </div>
         <div className="contactCard">
+          <strong>{contact.brand}</strong>
+          <span>{contact.name}</span>
           <a href={`tel:${contact.phone}`}>โทร {contact.phone}</a>
-          <a href={contact.lineUrl} target="_blank" rel="noreferrer">ติดต่อ LINE</a>
+          <a href={contact.lineUrl} target="_blank" rel="noreferrer">ติดต่อ LINE OA</a>
           <a href={`mailto:${contact.email}`}>{contact.email}</a>
+          <a href={contact.portfolio} target="_blank" rel="noreferrer">ดูผลงาน Frank Creative</a>
         </div>
       </section>
 
-      <nav className={`bottomNav ${isScrolled ? 'scrolled' : ''}`} aria-label="เมนูล่าง">
-        {bottomLinks.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
+      <nav className={`bottomDock ${isScrolled ? 'scrolled' : ''}`} aria-label="Quick navigation">
+        <a href="#search">ค้นหา</a>
+        <a href="#collections">ทรัพย์</a>
+        <a href="#contact">ติดต่อ</a>
       </nav>
 
-      {selectedProperty && (
-        <div className="modalBackdrop" onClick={() => setSelectedProperty(null)}>
-          <article className="propertyModal" onClick={(event) => event.stopPropagation()}>
-            <button className="closeBtn" onClick={() => setSelectedProperty(null)}>×</button>
-            <img src={selectedProperty.image} alt={selectedProperty.title} />
-            <div>
-              <span className="pill">{selectedProperty.listingLabel}</span>
-              <h2>{selectedProperty.title}</h2>
-              <p>{selectedProperty.summary}</p>
-              <strong>{selectedProperty.priceText}</strong>
-              <div className="modalFacts">
-                <span>{selectedProperty.propertyLabel}</span>
-                <span>{selectedProperty.location}</span>
-                <span>{selectedProperty.landSize}</span>
-                <span>{selectedProperty.usableArea}</span>
-              </div>
-              <div className="heroActions">
-                <a className="primaryBtn" href={contact.lineUrl} target="_blank" rel="noreferrer">สอบถามผ่าน LINE</a>
-                <a className="ghostBtn dark" href={`tel:${contact.phone}`}>โทรทันที</a>
-              </div>
-            </div>
-          </article>
-        </div>
-      )}
+      <PropertyModal property={selectedProperty} onClose={() => setSelectedProperty(null)} />
     </main>
   )
 }
