@@ -181,6 +181,52 @@ const nearby = [
   ['โรงเรียน', '12 นาที'],
 ]
 
+const seoTopics = [
+  {
+    title: 'บ้านขายโคราช',
+    text: 'รวมรายการบ้านเดี่ยวและทาวน์โฮมในนครราชสีมา สำหรับคนที่ต้องการซื้อบ้านพร้อมอยู่ ใกล้ถนนหลัก ห้าง โรงเรียน และพื้นที่ใช้ชีวิตของครอบครัว',
+  },
+  {
+    title: 'บ้านเช่าโคราช',
+    text: 'คัดรายการบ้านเช่าและทาวน์โฮมให้เช่าในตัวเมืองโคราช พร้อมข้อมูลค่าเช่ารายเดือน จำนวนห้องนอน ที่จอดรถ และช่องทางสอบถามว่างทันที',
+  },
+  {
+    title: 'ที่ดินเปล่าและอาคารพาณิชย์',
+    text: 'เหมาะสำหรับผู้ที่ต้องการซื้อที่ดินเปล่า ติดถนนใหญ่ อาคารพาณิชย์ หรือทรัพย์เพื่อทำธุรกิจ โกดัง ออฟฟิศ และการลงทุนระยะยาว',
+  },
+]
+
+const seoKeywords = [
+  'บ้านขายโคราช',
+  'บ้านเช่าโคราช',
+  'บ้านเดี่ยวโคราช',
+  'ทาวน์โฮมโคราช',
+  'ที่ดินเปล่าโคราช',
+  'อาคารพาณิชย์โคราช',
+  'อสังหาริมทรัพย์นครราชสีมา',
+  'บ้านใกล้ฉัน',
+  'บ้านพร้อมอยู่',
+  'ที่ดินติดถนนใหญ่',
+]
+
+const faqItems = [
+  {
+    question: 'ค้นหาบ้านขายหรือบ้านเช่าในโคราชจากเว็บนี้ได้อย่างไร?',
+    answer:
+      'เลือกตัวกรอง ซื้อ เช่า หรือทั้งหมด จากนั้นพิมพ์ทำเล เช่น โคราช เขาใหญ่ หรือใกล้ห้าง แล้วเลือกประเภทอสังหา เช่น บ้านเดี่ยว ทาวน์โฮม อาคาร หรือที่ดินเปล่า',
+  },
+  {
+    question: 'ระบบใช้พิกัดจากเครื่องผู้ใช้ทำอะไร?',
+    answer:
+      'เมื่อผู้ใช้กดปุ่มใช้พิกัดของฉัน ระบบจะขออนุญาตจากเบราว์เซอร์ก่อน แล้วคำนวณระยะทางเพื่อจัดเรียงรายการอสังหาริมทรัพย์ที่อยู่ใกล้ผู้ใช้ขึ้นมาก่อน',
+  },
+  {
+    question: 'ต้องมีข้อมูลอะไรบ้างก่อนนัดชมบ้าน?',
+    answer:
+      'ควรดูราคา ทำเล ขนาดที่ดิน พื้นที่ใช้สอย จำนวนห้องนอน ห้องน้ำ ที่จอดรถ สถานะพร้อมอยู่หรือให้เช่า และติดต่อผ่าน LINE หรือโทรเพื่อยืนยันข้อมูลล่าสุด',
+  },
+]
+
 const toRadians = (degree) => (degree * Math.PI) / 180
 
 const getDistanceKm = (origin, destination) => {
@@ -284,18 +330,18 @@ function App() {
     setFormStatus('ส่งข้อมูลตัวอย่างแล้ว สามารถเชื่อมต่อฟอร์มจริงกับ LINE, Email หรือ CRM ได้')
   }
 
-  const navItems = ['บ้านเด่น', 'แกลเลอรี', 'รายละเอียด', 'ทำเล', 'ติดต่อ']
+  const navItems = ['บ้านเด่น', 'แกลเลอรี', 'รายละเอียด', 'ทำเล', 'คำค้นหา', 'ติดต่อ']
 
   return (
     <div className="site-shell">
       <header className="site-header">
-        <a href="#top" className="brand" aria-label="Luxury Home">
+        <a href="#top" className="brand" aria-label="ALPHA ESTATE บ้านขาย บ้านเช่า โคราช">
           <span className="brand-mark">
             <Home size={18} />
           </span>
           <span>
             <strong>ALPHA ESTATE</strong>
-            <small>Luxury House Collection</small>
+            <small>บ้านขาย · บ้านเช่า · ที่ดินโคราช</small>
           </span>
         </a>
 
@@ -331,14 +377,15 @@ function App() {
       )}
 
       <main id="top">
-        <section className="hero-section">
+        <section className="hero-section" aria-labelledby="main-title">
           <div className="hero-bg" style={{ backgroundImage: `url(${activePropertyDetails.image})` }} />
           <div className="hero-overlay" />
           <div className="hero-content hero-content-minimal">
-            <div className="search-panel" aria-label="Property search">
+            <div className="search-panel" aria-label="ค้นหาอสังหาริมทรัพย์">
               <div className="search-panel-header">
                 <span>ค้นหาอสังหา</span>
-                <strong>เลือกจากเป้าหมาย แล้วค่อยกรองรายละเอียด</strong>
+                <h1 id="main-title">บ้านขาย บ้านเช่า โคราช และอสังหาริมทรัพย์ใกล้คุณ</h1>
+                <p>เลือกซื้อ เช่า หรือดูทั้งหมด แล้วกรองประเภทบ้าน อาคาร หรือที่ดินเปล่าได้ทันที</p>
               </div>
 
               <div className="segmented-control" aria-label="เลือกเช่า ซื้อ หรือทั้งหมด">
@@ -418,7 +465,7 @@ function App() {
                 className={`property-card ${property.id === activePropertyDetails.id ? 'active' : ''}`}
                 onClick={() => setActiveProperty(property)}
               >
-                <img src={property.image} alt={`${property.title} ${property.location}`} />
+                <img src={property.image} alt={`${property.propertyLabel} ${property.status} ${property.location} ${property.title}`} />
                 <div className="property-card-body">
                   <div className="card-badges">
                     <span>{property.status}</span>
@@ -439,13 +486,13 @@ function App() {
         <section className="gallery-section" id="แกลเลอรี">
           <div className="gallery-intro">
             <p className="eyebrow dark">Image-first Gallery</p>
-            <h2>แกลเลอรีแบบเว็บบ้านหรู</h2>
-            <p>ใช้ภาพใหญ่ คุมระยะห่าง และลดข้อความ เพื่อให้บ้านดูน่าสนใจขึ้นโดยไม่ต้องยัดข้อมูลแน่นเกินไป</p>
+            <h2>แกลเลอรีบ้านขาย บ้านเช่า และที่ดินแบบเว็บอสังหาหรู</h2>
+            <p>ใช้ภาพใหญ่ คุมระยะห่าง และลดข้อความ เพื่อให้ผู้ซื้อหรือผู้เช่าเห็นบรรยากาศบ้าน ทำเล และรายละเอียดสำคัญได้เร็ว</p>
           </div>
           <div className="gallery-grid">
             {gallery.map((item, index) => (
               <article className={`gallery-card gallery-${index + 1}`} key={item.title}>
-                <img src={item.image} alt={item.title} />
+                <img src={item.image} alt={`${item.title} สำหรับประกาศบ้านขาย บ้านเช่า โคราช`} />
                 <div>
                   <span>{item.label}</span>
                   <h3>{item.title}</h3>
@@ -507,6 +554,43 @@ function App() {
           })}
         </section>
 
+        <section className="section seo-section" id="คำค้นหา" aria-labelledby="seo-title">
+          <div className="section-heading seo-heading">
+            <p className="eyebrow dark">Search-friendly Content</p>
+            <h2 id="seo-title">ค้นหาอสังหาริมทรัพย์โคราชตามความต้องการ</h2>
+            <p>
+              หน้าเว็บนี้ถูกจัดคอนเทนต์ให้ Google และผู้ใช้เข้าใจว่าเว็บเกี่ยวกับบ้านขาย บ้านเช่า ที่ดินเปล่า อาคารพาณิชย์ และทำเลนครราชสีมา
+            </p>
+          </div>
+
+          <div className="seo-grid">
+            {seoTopics.map((topic) => (
+              <article key={topic.title}>
+                <h3>{topic.title}</h3>
+                <p>{topic.text}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="seo-keywords" aria-label="คำค้นหาที่เกี่ยวข้อง">
+            {seoKeywords.map((keyword) => (
+              <a key={keyword} href="#บ้านเด่น">
+                {keyword}
+              </a>
+            ))}
+          </div>
+
+          <div className="seo-faq" aria-label="คำถามที่พบบ่อย">
+            <h3>คำถามที่พบบ่อยเกี่ยวกับการค้นหาบ้านและที่ดินในโคราช</h3>
+            {faqItems.map((item) => (
+              <details key={item.question}>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
         <section className="section location-section" id="ทำเล">
           <div className="map-card">
             <div className="map-visual">
@@ -515,7 +599,7 @@ function App() {
             </div>
             <div className="map-details">
               <p className="eyebrow dark">Location</p>
-              <h2>ทำเลชัด ช่วยให้ตัดสินใจง่ายขึ้น</h2>
+              <h2>ทำเลโคราช เขาใหญ่ และนครราชสีมา ช่วยให้ตัดสินใจง่ายขึ้น</h2>
               <p>พื้นที่นี้สามารถฝัง Google Maps จริง หรือใส่ภาพแผนที่โครงการพร้อมจุดสำคัญรอบบ้านได้</p>
               <div className="nearby-list">
                 {nearby.map(([place, time]) => (
@@ -532,7 +616,7 @@ function App() {
         <section className="section contact-section" id="ติดต่อ">
           <div className="contact-copy">
             <p className="eyebrow dark">Book a Visit</p>
-            <h2>สนใจบ้านหลังนี้ นัดชมบ้านได้ทันที</h2>
+            <h2>สนใจบ้าน ที่ดิน หรืออาคารพาณิชย์ นัดชมทรัพย์ได้ทันที</h2>
             <p>
               ฟอร์มนี้ทำเป็นตัวอย่าง สามารถเชื่อมต่อกับ Email, LINE Notify, Google Sheets, CRM หรือระบบหลังบ้านได้ภายหลัง
             </p>
@@ -596,7 +680,7 @@ function App() {
           <Building2 size={22} />
           <span>ALPHA ESTATE</span>
         </div>
-        <p>Luxury real estate website concept · Built with React + Vite</p>
+        <p>บ้านขาย บ้านเช่า ที่ดินเปล่า และอาคารพาณิชย์โคราช · Built with React + Vite</p>
       </footer>
 
       <div className="sticky-cta" aria-label="Quick contact">
