@@ -205,12 +205,7 @@ function App() {
         <section className="hero-section">
           <div className="hero-bg" style={{ backgroundImage: `url(${activeProperty.image})` }} />
           <div className="hero-overlay" />
-          <div className="hero-content">
-            <p className="eyebrow">Premium Real Estate · Modern Luxury Living</p>
-            <h1>บ้านสวยระดับพรีเมียม ที่ขายด้วยภาพและความรู้สึกตั้งแต่หน้าแรก</h1>
-            <p className="hero-description">
-              เว็บไซต์ขายบ้านสไตล์เรียบหรู เน้นภาพใหญ่ รายละเอียดอ่านง่าย พร้อมช่องทางติดต่อสำหรับนัดชมบ้านทันที
-            </p>
+          <div className="hero-content hero-content-minimal">
             <div className="hero-buttons">
               <a className="hero-primary" href="#บ้านเด่น">
                 ดูบ้านเด่น <ArrowRight size={18} />
