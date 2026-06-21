@@ -8,7 +8,7 @@
     right: 10px !important;
     bottom: calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
     width: auto !important;
-    max-height: 36svh !important;
+    max-height: 34svh !important;
     overflow-y: auto !important;
     padding: 12px 14px 14px !important;
     border-radius: 24px !important;
@@ -18,6 +18,10 @@
     box-shadow: 0 18px 70px rgba(0, 0, 0, .36) !important;
     backdrop-filter: blur(24px) saturate(1.18) !important;
     -webkit-backdrop-filter: blur(24px) saturate(1.18) !important;
+  }
+
+  .flowEditor.presetPulse {
+    box-shadow: 0 0 0 2px rgba(214, 185, 121, .48), 0 18px 70px rgba(0, 0, 0, .36) !important;
   }
 
   .flowEditor::before {
@@ -55,7 +59,7 @@
   }
 
   .flowEditorHead h2::after {
-    content: ' · ปัดขึ้นเพื่อดูเพิ่ม';
+    content: ' · ใช้ปุ่มลัดก่อน';
     display: inline;
     font-family: Inter, 'Noto Sans Thai', sans-serif;
     font-size: .68rem;
@@ -72,44 +76,67 @@
     font-size: 1.2rem !important;
   }
 
+  .mobilePresetBar {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin: 4px 0 10px;
+  }
+
+  .mobilePresetBar button {
+    border: 1px solid rgba(255, 255, 255, .13);
+    border-radius: 999px;
+    min-height: 40px;
+    padding: 8px 6px;
+    background: rgba(255, 255, 255, .11);
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 900;
+  }
+
+  .mobilePresetBar button:first-child {
+    background: #d6b979;
+    color: #111;
+  }
+
   .flowRange {
     display: grid !important;
-    grid-template-columns: 118px minmax(0, 1fr) !important;
+    grid-template-columns: 112px minmax(0, 1fr) !important;
     align-items: center !important;
     gap: 10px !important;
-    margin-top: 10px !important;
-    padding: 10px !important;
-    border-radius: 18px !important;
-    background: rgba(255, 255, 255, .07) !important;
-    border: 1px solid rgba(255, 255, 255, .08) !important;
+    margin-top: 8px !important;
+    padding: 8px !important;
+    border-radius: 16px !important;
+    background: rgba(255, 255, 255, .06) !important;
+    border: 1px solid rgba(255, 255, 255, .07) !important;
   }
 
   .flowRange span {
     display: grid !important;
     gap: 2px !important;
     color: rgba(255, 255, 255, .72) !important;
-    font-size: .74rem !important;
+    font-size: .7rem !important;
     line-height: 1.25 !important;
   }
 
   .flowRange span b {
     display: block !important;
     color: #fff !important;
-    font-size: .9rem !important;
+    font-size: .86rem !important;
     font-weight: 900 !important;
   }
 
   .flowRange input[type='range'] {
     width: 100% !important;
-    min-height: 36px !important;
+    min-height: 32px !important;
     accent-color: #d6b979 !important;
   }
 
   .resetUi {
     position: sticky;
     bottom: -4px;
-    margin-top: 12px !important;
-    height: 44px !important;
+    margin-top: 10px !important;
+    height: 42px !important;
     background: #d6b979 !important;
     color: #12110f !important;
     box-shadow: 0 -12px 36px rgba(12, 12, 10, .38) !important;
@@ -118,20 +145,24 @@
 
 @media (max-width: 420px) {
   .flowEditor {
-    max-height: 32svh !important;
+    max-height: 30svh !important;
     padding-inline: 10px !important;
   }
 
+  .mobilePresetBar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .flowRange {
-    grid-template-columns: 96px minmax(0, 1fr) !important;
+    grid-template-columns: 92px minmax(0, 1fr) !important;
     padding: 8px !important;
   }
 
   .flowRange span {
-    font-size: .68rem !important;
+    font-size: .66rem !important;
   }
 
   .flowRange span b {
-    font-size: .82rem !important;
+    font-size: .8rem !important;
   }
 }
