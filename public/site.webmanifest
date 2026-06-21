@@ -1,0 +1,19 @@
+{
+  "name": "ALPHA ESTATE - บ้านขาย บ้านเช่า โคราช",
+  "short_name": "ALPHA ESTATE",
+  "description": "ค้นหาบ้านขาย บ้านเช่า ที่ดินเปล่า อาคารพาณิชย์ และอสังหาริมทรัพย์ทำเลดีในโคราช",
+  "lang": "th-TH",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#11100d",
+  "theme_color": "#11100d",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
