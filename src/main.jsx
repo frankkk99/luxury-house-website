@@ -5,6 +5,7 @@ import './styles.css'
 import './ui-editor.css'
 import './flow-redesign.css'
 import './glass-topbar.css'
+import './mobile-ui-editor.css'
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
