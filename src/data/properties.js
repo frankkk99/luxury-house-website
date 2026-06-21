@@ -7,6 +7,10 @@ const images = [
   'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1600&q=85',
   'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1600&q=85',
   'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=85',
+  'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1600&q=85',
+  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=85',
+  'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&w=1600&q=85',
+  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1600&q=85',
 ]
 
 const locations = [
@@ -41,22 +45,23 @@ export const propertyTypes = [
 ]
 
 const typeData = {
-  house: { label: 'บ้านเดี่ยว', titles: ['บ้านเดี่ยวโมเดิร์น', 'บ้านครอบครัวพร้อมสวน', 'บ้านหรูพร้อมเข้าอยู่'], baseSale: 4200000, baseRent: 26000 },
-  townhome: { label: 'ทาวน์โฮม', titles: ['ทาวน์โฮมฟังก์ชันครบ', 'ทาวน์โฮมใกล้เมือง', 'ทาวน์โฮมพร้อมเฟอร์'], baseSale: 2600000, baseRent: 15000 },
-  commercial: { label: 'อาคารพาณิชย์', titles: ['อาคารพาณิชย์ติดถนน', 'ตึกแถวทำเลค้าขาย', 'อาคารธุรกิจใกล้ชุมชน'], baseSale: 5500000, baseRent: 32000 },
-  land: { label: 'ที่ดินเปล่า', titles: ['ที่ดินเปล่าติดถนน', 'ที่ดินเหมาะลงทุน', 'ที่ดินทำเลโครงการ'], baseSale: 1800000, baseRent: 0 },
-  condo: { label: 'คอนโด', titles: ['คอนโดวิวเมือง', 'คอนโดใกล้รถไฟฟ้า', 'คอนโดพร้อมอยู่'], baseSale: 1900000, baseRent: 12000 },
-  warehouse: { label: 'โกดัง / โรงงาน', titles: ['โกดังให้เช่า', 'โรงงานพร้อมออฟฟิศ', 'คลังสินค้าใกล้ถนนใหญ่'], baseSale: 9800000, baseRent: 55000 },
-  office: { label: 'ออฟฟิศ', titles: ['ออฟฟิศให้เช่า', 'สำนักงานพร้อมใช้', 'ออฟฟิศใกล้เมือง'], baseSale: 7200000, baseRent: 28000 },
-  apartment: { label: 'อพาร์ตเมนต์', titles: ['อพาร์ตเมนต์ลงทุน', 'หอพักใกล้ชุมชน', 'อพาร์ตเมนต์พร้อมผู้เช่า'], baseSale: 12500000, baseRent: 0 },
-  villa: { label: 'พูลวิลล่า', titles: ['พูลวิลล่าพักผ่อน', 'วิลล่าเขาใหญ่', 'บ้านพักตากอากาศ'], baseSale: 8900000, baseRent: 45000 },
+  house: { label: 'บ้านเดี่ยว', slug: 'house', titles: ['บ้านเดี่ยวโมเดิร์น', 'บ้านครอบครัวพร้อมสวน', 'บ้านหรูพร้อมเข้าอยู่'], baseSale: 4200000, baseRent: 26000 },
+  townhome: { label: 'ทาวน์โฮม', slug: 'townhome', titles: ['ทาวน์โฮมฟังก์ชันครบ', 'ทาวน์โฮมใกล้เมือง', 'ทาวน์โฮมพร้อมเฟอร์'], baseSale: 2600000, baseRent: 15000 },
+  commercial: { label: 'อาคารพาณิชย์', slug: 'commercial', titles: ['อาคารพาณิชย์ติดถนน', 'ตึกแถวทำเลค้าขาย', 'อาคารธุรกิจใกล้ชุมชน'], baseSale: 5500000, baseRent: 32000 },
+  land: { label: 'ที่ดินเปล่า', slug: 'land', titles: ['ที่ดินเปล่าติดถนน', 'ที่ดินเหมาะลงทุน', 'ที่ดินทำเลโครงการ'], baseSale: 1800000, baseRent: 0 },
+  condo: { label: 'คอนโด', slug: 'condo', titles: ['คอนโดวิวเมือง', 'คอนโดใกล้รถไฟฟ้า', 'คอนโดพร้อมอยู่'], baseSale: 1900000, baseRent: 12000 },
+  warehouse: { label: 'โกดัง / โรงงาน', slug: 'warehouse', titles: ['โกดังให้เช่า', 'โรงงานพร้อมออฟฟิศ', 'คลังสินค้าใกล้ถนนใหญ่'], baseSale: 9800000, baseRent: 55000 },
+  office: { label: 'ออฟฟิศ', slug: 'office', titles: ['ออฟฟิศให้เช่า', 'สำนักงานพร้อมใช้', 'ออฟฟิศใกล้เมือง'], baseSale: 7200000, baseRent: 28000 },
+  apartment: { label: 'อพาร์ตเมนต์', slug: 'apartment', titles: ['อพาร์ตเมนต์ลงทุน', 'หอพักใกล้ชุมชน', 'อพาร์ตเมนต์พร้อมผู้เช่า'], baseSale: 12500000, baseRent: 0 },
+  villa: { label: 'พูลวิลล่า', slug: 'villa', titles: ['พูลวิลล่าพักผ่อน', 'วิลล่าเขาใหญ่', 'บ้านพักตากอากาศ'], baseSale: 8900000, baseRent: 45000 },
 }
 
 const typeKeys = Object.keys(typeData)
-const statuses = ['พร้อมเข้าอยู่', 'มือสองสภาพดี', 'สร้างใหม่', 'เหมาะลงทุน', 'ใกล้ถนนหลัก']
+const statuses = ['พร้อมเข้าอยู่', 'มือสองสภาพดี', 'สร้างใหม่', 'เหมาะลงทุน', 'ใกล้ถนนหลัก', 'ติดจองได้', 'นัดชมได้']
 const tags = ['ภาพจริง', 'ติดต่อไว', 'นัดชมได้', 'ทำเลดี', 'ข้อมูลครบ', 'เดโมขายเว็บ']
 
 const money = (value) => new Intl.NumberFormat('th-TH').format(value)
+const slugify = (value) => String(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
 export const properties = Array.from({ length: 200 }, (_, index) => {
   const id = index + 1
@@ -71,9 +76,13 @@ export const properties = Array.from({ length: 200 }, (_, index) => {
   const title = `${typeInfo.titles[index % typeInfo.titles.length]} ${location[0]} #${String(id).padStart(3, '0')}`
   const lat = Number((location[1] + ((index % 9) - 4) * 0.012).toFixed(6))
   const lng = Number((location[2] + ((index % 7) - 3) * 0.012).toFixed(6))
+  const slug = `${typeInfo.slug}-${isRent ? 'rent' : 'sale'}-${slugify(location[0])}-${String(id).padStart(3, '0')}`
+  const imageIndex = index % images.length
+  const gallery = [images[imageIndex], images[(imageIndex + 1) % images.length], images[(imageIndex + 2) % images.length], images[(imageIndex + 3) % images.length]]
 
   return {
     id,
+    slug,
     title,
     listingType: isRent ? 'rent' : 'sale',
     listingLabel: isRent ? 'ให้เช่า' : 'ขาย',
@@ -88,12 +97,14 @@ export const properties = Array.from({ length: 200 }, (_, index) => {
     landSize: type === 'land' ? `${1 + (index % 6)} ไร่ ${index % 4} งาน` : `${42 + (index % 80)} ตร.วา`,
     usableArea: type === 'land' ? '-' : `${80 + (index % 240)} ตร.ม.`,
     status: statuses[index % statuses.length],
-    image: images[index % images.length],
+    image: images[imageIndex],
+    gallery,
     lat,
     lng,
     tags: [typeInfo.label, location[0], isRent ? 'เช่า' : 'ขาย', tags[index % tags.length]],
-    summary: `รายการเดโมสำหรับทดสอบเว็บอสังหา ครอบคลุมข้อมูลราคา ทำเล ภาพประกอบ และช่องทางติดต่อ เหมาะสำหรับพรีเซนต์ระบบให้ลูกค้าเห็นภาพการใช้งานจริง`,
+    summary: 'รายการเดโมสำหรับทดสอบเว็บอสังหา ครอบคลุมข้อมูลราคา ทำเล ภาพประกอบ และช่องทางติดต่อ เหมาะสำหรับพรีเซนต์ระบบให้ลูกค้าเห็นภาพการใช้งานจริง',
+    fullDescription: `${typeInfo.label}ทำเล${location[0]} รายการนี้สร้างไว้สำหรับเดโมระบบเว็บอสังหาแบบครบ flow ผู้ใช้สามารถดูภาพหลายมุม เปรียบเทียบข้อมูลเบื้องต้น เปิดหน้ารายละเอียดแยก แชร์ลิงก์ให้ลูกค้า และติดต่อผ่านโทรศัพท์ LINE หรืออีเมลได้ทันที`,
   }
 })
 
-export const featuredProperties = properties.filter((item) => item.id % 11 === 0 || item.id < 10).slice(0, 18)
+export const featuredProperties = properties.filter((item) => item.id % 11 === 0 || item.id < 10).slice(0, 24)
