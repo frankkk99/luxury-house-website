@@ -4,6 +4,7 @@ import App from './App.jsx'
 import './styles.css'
 import './luxury-tune.css'
 import './geo-search.css'
+import './seo-content.css'
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
