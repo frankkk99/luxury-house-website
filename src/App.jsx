@@ -28,13 +28,31 @@ const contact = {
   email: 'sales@example.com',
 }
 
+const listingModes = [
+  { value: 'all', label: 'ทั้งหมด' },
+  { value: 'sale', label: 'ซื้อ' },
+  { value: 'rent', label: 'เช่า' },
+]
+
+const propertyTypes = [
+  { value: 'all', label: 'ทั้งหมด' },
+  { value: 'house', label: 'บ้านเดี่ยว' },
+  { value: 'townhome', label: 'ทาวน์โฮม' },
+  { value: 'commercial', label: 'อาคาร' },
+  { value: 'land', label: 'ที่ดินเปล่า' },
+]
+
 const properties = [
   {
     id: 1,
     title: 'The Grand Courtyard Residence',
     location: 'โคราช · ใกล้ถนนมิตรภาพ',
+    listingType: 'sale',
+    propertyType: 'house',
+    propertyLabel: 'บ้านเดี่ยว',
     price: 'เริ่มต้น 4.59 ล้านบาท',
     status: 'พร้อมเข้าอยู่',
+    coordinates: { lat: 14.9799, lng: 102.0977 },
     image:
       'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=85',
     specs: {
@@ -50,8 +68,12 @@ const properties = [
     id: 2,
     title: 'Serene Pool Villa',
     location: 'เขาใหญ่ · บรรยากาศส่วนตัว',
+    listingType: 'sale',
+    propertyType: 'house',
+    propertyLabel: 'พูลวิลล่า',
     price: 'เริ่มต้น 8.90 ล้านบาท',
     status: 'เปิดจอง',
+    coordinates: { lat: 14.5639, lng: 101.3721 },
     image:
       'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=85',
     specs: {
@@ -67,8 +89,12 @@ const properties = [
     id: 3,
     title: 'Minimal Urban Home',
     location: 'ตัวเมืองนครราชสีมา · ใกล้ห้างและโรงเรียน',
-    price: 'เริ่มต้น 3.89 ล้านบาท',
-    status: 'เหลือ 2 หลังสุดท้าย',
+    listingType: 'rent',
+    propertyType: 'townhome',
+    propertyLabel: 'ทาวน์โฮม',
+    price: '25,000 บาท / เดือน',
+    status: 'ให้เช่า',
+    coordinates: { lat: 14.9837, lng: 102.1098 },
     image:
       'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=85',
     specs: {
@@ -79,6 +105,27 @@ const properties = [
       usable: '188 ตร.ม.',
     },
     highlight: 'บ้านโมเดิร์นเรียบง่าย ดูแลไม่ยาก เดินทางสะดวก เหมาะกับครอบครัวเริ่มต้น',
+  },
+  {
+    id: 4,
+    title: 'Prime Roadside Land',
+    location: 'โคราช · ติดถนนใหญ่ เหมาะลงทุน',
+    listingType: 'sale',
+    propertyType: 'land',
+    propertyLabel: 'ที่ดินเปล่า',
+    price: '8.90 ล้านบาท',
+    status: 'ขาย',
+    coordinates: { lat: 14.9455, lng: 102.0604 },
+    image:
+      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1400&q=85',
+    specs: {
+      bedrooms: 0,
+      bathrooms: 0,
+      parking: 0,
+      area: '2 ไร่ 1 งาน',
+      usable: 'ติดถนนใหญ่',
+    },
+    highlight: 'ที่ดินเปล่าทำเลติดถนน เหมาะสำหรับสร้างบ้าน โกดัง หรือถือระยะยาวเพื่อการลงทุน',
   },
 ]
 
@@ -134,21 +181,103 @@ const nearby = [
   ['โรงเรียน', '12 นาที'],
 ]
 
+const toRadians = (degree) => (degree * Math.PI) / 180
+
+const getDistanceKm = (origin, destination) => {
+  const earthRadiusKm = 6371
+  const latDelta = toRadians(destination.lat - origin.lat)
+  const lngDelta = toRadians(destination.lng - origin.lng)
+  const originLat = toRadians(origin.lat)
+  const destinationLat = toRadians(destination.lat)
+
+  const a =
+    Math.sin(latDelta / 2) * Math.sin(latDelta / 2) +
+    Math.cos(originLat) * Math.cos(destinationLat) * Math.sin(lngDelta / 2) * Math.sin(lngDelta / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+  return Number((earthRadiusKm * c).toFixed(1))
+}
+
 function App() {
   const [activeProperty, setActiveProperty] = useState(properties[0])
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [formStatus, setFormStatus] = useState('')
+  const [listingMode, setListingMode] = useState('all')
+  const [propertyType, setPropertyType] = useState('all')
+  const [searchLocation, setSearchLocation] = useState('')
+  const [userLocation, setUserLocation] = useState(null)
+  const [locationStatus, setLocationStatus] = useState('')
+
+  const propertiesWithDistance = useMemo(
+    () =>
+      properties.map((property) => ({
+        ...property,
+        distanceKm: userLocation ? getDistanceKm(userLocation, property.coordinates) : null,
+      })),
+    [userLocation],
+  )
+
+  const filteredProperties = useMemo(() => {
+    const keyword = searchLocation.trim().toLowerCase()
+
+    return propertiesWithDistance
+      .filter((property) => listingMode === 'all' || property.listingType === listingMode)
+      .filter((property) => propertyType === 'all' || property.propertyType === propertyType)
+      .filter((property) => {
+        if (!keyword) return true
+        return `${property.title} ${property.location} ${property.propertyLabel}`.toLowerCase().includes(keyword)
+      })
+      .sort((a, b) => {
+        if (a.distanceKm === null || b.distanceKm === null) return 0
+        return a.distanceKm - b.distanceKm
+      })
+  }, [listingMode, propertyType, propertiesWithDistance, searchLocation])
+
+  const displayProperties = filteredProperties.length > 0 ? filteredProperties : propertiesWithDistance
+  const activePropertyDetails = propertiesWithDistance.find((property) => property.id === activeProperty.id) ?? activeProperty
 
   const mainSpecs = useMemo(
     () => [
-      { icon: BedDouble, label: 'ห้องนอน', value: `${activeProperty.specs.bedrooms} ห้อง` },
-      { icon: Bath, label: 'ห้องน้ำ', value: `${activeProperty.specs.bathrooms} ห้อง` },
-      { icon: Car, label: 'ที่จอดรถ', value: `${activeProperty.specs.parking} คัน` },
-      { icon: LandPlot, label: 'ที่ดิน', value: activeProperty.specs.area },
-      { icon: Ruler, label: 'พื้นที่ใช้สอย', value: activeProperty.specs.usable },
+      { icon: BedDouble, label: 'ห้องนอน', value: activePropertyDetails.specs.bedrooms > 0 ? `${activePropertyDetails.specs.bedrooms} ห้อง` : '-' },
+      { icon: Bath, label: 'ห้องน้ำ', value: activePropertyDetails.specs.bathrooms > 0 ? `${activePropertyDetails.specs.bathrooms} ห้อง` : '-' },
+      { icon: Car, label: 'ที่จอดรถ', value: activePropertyDetails.specs.parking > 0 ? `${activePropertyDetails.specs.parking} คัน` : '-' },
+      { icon: LandPlot, label: 'ที่ดิน', value: activePropertyDetails.specs.area },
+      { icon: Ruler, label: 'พื้นที่ใช้สอย', value: activePropertyDetails.specs.usable },
     ],
-    [activeProperty],
+    [activePropertyDetails],
   )
+
+  const handleUseLocation = () => {
+    if (!('geolocation' in navigator)) {
+      setLocationStatus('เบราว์เซอร์นี้ยังไม่รองรับการใช้พิกัด')
+      return
+    }
+
+    setLocationStatus('กำลังขออนุญาตใช้พิกัดจากเครื่องของคุณ...')
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        })
+        setLocationStatus('ใช้พิกัดของคุณแล้ว ระบบจัดเรียงรายการใกล้ที่สุดให้ก่อน')
+      },
+      (error) => {
+        const messages = {
+          1: 'คุณยังไม่ได้อนุญาตให้ใช้พิกัด สามารถกดใหม่แล้วเลือก Allow ได้',
+          2: 'ไม่สามารถอ่านพิกัดได้ ลองเปิด Location Service แล้วกดใหม่อีกครั้ง',
+          3: 'ใช้เวลาค้นหาพิกัดนานเกินไป ลองกดใหม่อีกครั้ง',
+        }
+        setLocationStatus(messages[error.code] || 'ไม่สามารถใช้พิกัดได้ในตอนนี้')
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      },
+    )
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -203,51 +332,104 @@ function App() {
 
       <main id="top">
         <section className="hero-section">
-          <div className="hero-bg" style={{ backgroundImage: `url(${activeProperty.image})` }} />
+          <div className="hero-bg" style={{ backgroundImage: `url(${activePropertyDetails.image})` }} />
           <div className="hero-overlay" />
           <div className="hero-content hero-content-minimal">
-            <div className="hero-buttons">
-              <a className="hero-primary" href="#บ้านเด่น">
-                ดูบ้านเด่น <ArrowRight size={18} />
-              </a>
-              <a className="hero-secondary" href="#ติดต่อ">
-                นัดชมบ้าน
-              </a>
+            <div className="search-panel" aria-label="Property search">
+              <div className="search-panel-header">
+                <span>ค้นหาอสังหา</span>
+                <strong>เลือกจากเป้าหมาย แล้วค่อยกรองรายละเอียด</strong>
+              </div>
+
+              <div className="segmented-control" aria-label="เลือกเช่า ซื้อ หรือทั้งหมด">
+                {listingModes.map((mode) => (
+                  <button
+                    key={mode.value}
+                    className={listingMode === mode.value ? 'active' : ''}
+                    type="button"
+                    onClick={() => setListingMode(mode.value)}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
+              </div>
+
+              <label className="search-field">
+                ทำเล / โครงการ
+                <input
+                  type="text"
+                  value={searchLocation}
+                  onChange={(event) => setSearchLocation(event.target.value)}
+                  placeholder="เช่น โคราช, เขาใหญ่, ใกล้ห้าง"
+                />
+              </label>
+
+              <div className="property-type-filter" aria-label="ประเภทอสังหา">
+                {propertyTypes.map((type) => (
+                  <button
+                    key={type.value}
+                    className={propertyType === type.value ? 'active' : ''}
+                    type="button"
+                    onClick={() => setPropertyType(type.value)}
+                  >
+                    {type.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="location-row">
+                <button className="use-location-button" type="button" onClick={handleUseLocation}>
+                  <MapPin size={17} /> ใช้พิกัดของฉัน
+                </button>
+                <a className="search-submit" href="#บ้านเด่น">
+                  ดูผลลัพธ์ <ArrowRight size={17} />
+                </a>
+              </div>
+
+              {locationStatus && <p className="location-status">{locationStatus}</p>}
             </div>
           </div>
 
           <aside className="hero-card" aria-label="Featured property">
-            <span>{activeProperty.status}</span>
-            <h2>{activeProperty.title}</h2>
+            <span>{activePropertyDetails.status}</span>
+            <h2>{activePropertyDetails.title}</h2>
             <p>
-              <MapPin size={16} /> {activeProperty.location}
+              <MapPin size={16} /> {activePropertyDetails.location}
             </p>
-            <strong>{activeProperty.price}</strong>
+            <strong>{activePropertyDetails.price}</strong>
+            {activePropertyDetails.distanceKm !== null && <small>ห่างจากคุณประมาณ {activePropertyDetails.distanceKm} กม.</small>}
           </aside>
         </section>
 
         <section className="section property-section" id="บ้านเด่น">
           <div className="section-heading">
             <p className="eyebrow dark">Selected Properties</p>
-            <h2>บ้านเด่นที่ควรโชว์บนหน้าแรก</h2>
-            <p>จัดเป็นการ์ดภาพใหญ่ ให้ผู้ซื้อเห็นราคา ทำเล สถานะ และจุดเด่นได้ทันที</p>
+            <h2>รายการอสังหาที่ตรงกับการค้นหา</h2>
+            <p>
+              พบ {filteredProperties.length} รายการจากตัวกรองปัจจุบัน
+              {userLocation ? ' · เรียงจากระยะใกล้ที่สุด' : ' · กดใช้พิกัดเพื่อดูรายการใกล้คุณ'}
+            </p>
           </div>
 
           <div className="property-grid">
-            {properties.map((property) => (
+            {displayProperties.map((property) => (
               <button
                 key={property.id}
-                className={`property-card ${property.id === activeProperty.id ? 'active' : ''}`}
+                className={`property-card ${property.id === activePropertyDetails.id ? 'active' : ''}`}
                 onClick={() => setActiveProperty(property)}
               >
                 <img src={property.image} alt={`${property.title} ${property.location}`} />
                 <div className="property-card-body">
-                  <span>{property.status}</span>
+                  <div className="card-badges">
+                    <span>{property.status}</span>
+                    <span>{property.propertyLabel}</span>
+                  </div>
                   <h3>{property.title}</h3>
                   <p>
                     <MapPin size={15} /> {property.location}
                   </p>
                   <strong>{property.price}</strong>
+                  {property.distanceKm !== null && <small>ห่างจากคุณประมาณ {property.distanceKm} กม.</small>}
                 </div>
               </button>
             ))}
@@ -276,8 +458,8 @@ function App() {
         <section className="section detail-section" id="รายละเอียด">
           <div className="detail-copy">
             <p className="eyebrow dark">Property Detail</p>
-            <h2>{activeProperty.title}</h2>
-            <p className="large-text">{activeProperty.highlight}</p>
+            <h2>{activePropertyDetails.title}</h2>
+            <p className="large-text">{activePropertyDetails.highlight}</p>
             <ul className="check-list">
               <li>
                 <CheckCircle2 size={18} /> ภาพบ้านจริงควรถูกจัดเป็นหมวด Exterior, Living, Bedroom, Kitchen, Bathroom
@@ -294,8 +476,8 @@ function App() {
           <div className="spec-panel">
             <div className="price-box">
               <span>ราคา</span>
-              <strong>{activeProperty.price}</strong>
-              <p>{activeProperty.status}</p>
+              <strong>{activePropertyDetails.price}</strong>
+              <p>{activePropertyDetails.status}</p>
             </div>
             <div className="spec-grid">
               {mainSpecs.map((spec) => {
@@ -391,7 +573,7 @@ function App() {
             </label>
             <label>
               บ้านที่สนใจ
-              <select defaultValue={activeProperty.title}>
+              <select defaultValue={activePropertyDetails.title}>
                 {properties.map((property) => (
                   <option key={property.id}>{property.title}</option>
                 ))}
