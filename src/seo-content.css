@@ -1,0 +1,140 @@
+.search-panel-header h1 {
+  margin: 0.24rem 0 0.35rem;
+  color: #17130e;
+  font-size: clamp(1.45rem, 2.6vw, 2.45rem);
+  line-height: 1.18;
+  letter-spacing: -0.035em;
+}
+
+.search-panel-header p {
+  margin: 0;
+  color: rgba(23, 19, 14, 0.68);
+  font-size: 0.95rem;
+  line-height: 1.75;
+}
+
+.seo-section {
+  background:
+    radial-gradient(circle at top left, rgba(201, 164, 92, 0.14), transparent 34%),
+    linear-gradient(135deg, #fbf8f2 0%, #ffffff 54%, #f4efe6 100%);
+  border-top: 1px solid rgba(27, 22, 16, 0.08);
+  border-bottom: 1px solid rgba(27, 22, 16, 0.08);
+}
+
+.seo-heading {
+  max-width: 860px;
+}
+
+.seo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2.2rem;
+}
+
+.seo-grid article {
+  min-height: 100%;
+  padding: 1.35rem;
+  border: 1px solid rgba(27, 22, 16, 0.08);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 24px 60px rgba(27, 22, 16, 0.06);
+}
+
+.seo-grid h3,
+.seo-faq h3 {
+  margin: 0 0 0.6rem;
+  color: #17130e;
+  font-size: 1.04rem;
+  letter-spacing: -0.015em;
+}
+
+.seo-grid p,
+.seo-faq p {
+  margin: 0;
+  color: rgba(23, 19, 14, 0.68);
+  font-size: 0.95rem;
+  line-height: 1.85;
+}
+
+.seo-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.6rem;
+}
+
+.seo-keywords a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0.68rem 0.9rem;
+  border: 1px solid rgba(27, 22, 16, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.76);
+  color: #2f281f;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.seo-keywords a:hover {
+  border-color: rgba(201, 164, 92, 0.62);
+  background: #fffaf0;
+}
+
+.seo-faq {
+  margin-top: 2rem;
+  padding: 1.45rem;
+  border-radius: 30px;
+  background: rgba(17, 16, 13, 0.94);
+  color: #fffaf2;
+}
+
+.seo-faq h3 {
+  color: #fffaf2;
+  margin-bottom: 1rem;
+}
+
+.seo-faq details {
+  border-top: 1px solid rgba(255, 250, 242, 0.12);
+  padding: 1rem 0;
+}
+
+.seo-faq details:first-of-type {
+  border-top: 0;
+}
+
+.seo-faq summary {
+  cursor: pointer;
+  color: #fffaf2;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.seo-faq p {
+  margin-top: 0.65rem;
+  color: rgba(255, 250, 242, 0.72);
+}
+
+@media (max-width: 900px) {
+  .seo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .search-panel-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .seo-section {
+    padding-bottom: 7rem;
+  }
+
+  .seo-grid article,
+  .seo-faq {
+    border-radius: 22px;
+  }
+}
