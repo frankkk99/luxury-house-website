@@ -14,21 +14,21 @@ const images = [
 ]
 
 const locations = [
-  ['ตัวเมืองนครราชสีมา', 14.9799, 102.0977],
-  ['ถนนมิตรภาพ', 14.9851, 102.0902],
-  ['หัวทะเล', 14.9501, 102.1257],
-  ['จอหอ', 15.0378, 102.1072],
-  ['เซฟวัน', 14.9468, 102.0527],
-  ['สูงเนิน', 14.9009, 101.8205],
-  ['ปากช่อง', 14.708, 101.4161],
-  ['เขาใหญ่', 14.439, 101.372],
-  ['วังน้ำเขียว', 14.4189, 101.8612],
-  ['กรุงเทพฯ', 13.7563, 100.5018],
-  ['พัทยา', 12.9236, 100.8825],
-  ['ระยอง', 12.6814, 101.2816],
-  ['หัวหิน', 12.5684, 99.9577],
-  ['เชียงใหม่', 18.7883, 98.9853],
-  ['ภูเก็ต', 7.8804, 98.3923],
+  ['ตัวเมืองนครราชสีมา', 'korat-city', 14.9799, 102.0977],
+  ['ถนนมิตรภาพ', 'mittraphap', 14.9851, 102.0902],
+  ['หัวทะเล', 'hua-thale', 14.9501, 102.1257],
+  ['จอหอ', 'joho', 15.0378, 102.1072],
+  ['เซฟวัน', 'saveone', 14.9468, 102.0527],
+  ['สูงเนิน', 'sung-noen', 14.9009, 101.8205],
+  ['ปากช่อง', 'pakchong', 14.708, 101.4161],
+  ['เขาใหญ่', 'khaoyai', 14.439, 101.372],
+  ['วังน้ำเขียว', 'wang-nam-khiao', 14.4189, 101.8612],
+  ['กรุงเทพฯ', 'bangkok', 13.7563, 100.5018],
+  ['พัทยา', 'pattaya', 12.9236, 100.8825],
+  ['ระยอง', 'rayong', 12.6814, 101.2816],
+  ['หัวหิน', 'huahin', 12.5684, 99.9577],
+  ['เชียงใหม่', 'chiangmai', 18.7883, 98.9853],
+  ['ภูเก็ต', 'phuket', 7.8804, 98.3923],
 ]
 
 export const propertyTypes = [
@@ -58,10 +58,9 @@ const typeData = {
 
 const typeKeys = Object.keys(typeData)
 const statuses = ['พร้อมเข้าอยู่', 'มือสองสภาพดี', 'สร้างใหม่', 'เหมาะลงทุน', 'ใกล้ถนนหลัก', 'ติดจองได้', 'นัดชมได้']
-const tags = ['ภาพจริง', 'ติดต่อไว', 'นัดชมได้', 'ทำเลดี', 'ข้อมูลครบ', 'เดโมขายเว็บ']
+const tags = ['ภาพจริง', 'ติดต่อไว', 'นัดชมได้', 'ทำเลดี', 'ข้อมูลครบ', 'ทรัพย์แนะนำ']
 
 const money = (value) => new Intl.NumberFormat('th-TH').format(value)
-const slugify = (value) => String(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
 export const properties = Array.from({ length: 200 }, (_, index) => {
   const id = index + 1
@@ -74,9 +73,9 @@ export const properties = Array.from({ length: 200 }, (_, index) => {
   const rentPrice = typeInfo.baseRent + (index % 12) * 2200
   const price = isRent ? rentPrice : salePrice
   const title = `${typeInfo.titles[index % typeInfo.titles.length]} ${location[0]} #${String(id).padStart(3, '0')}`
-  const lat = Number((location[1] + ((index % 9) - 4) * 0.012).toFixed(6))
-  const lng = Number((location[2] + ((index % 7) - 3) * 0.012).toFixed(6))
-  const slug = `${typeInfo.slug}-${isRent ? 'rent' : 'sale'}-${slugify(location[0])}-${String(id).padStart(3, '0')}`
+  const lat = Number((location[2] + ((index % 9) - 4) * 0.012).toFixed(6))
+  const lng = Number((location[3] + ((index % 7) - 3) * 0.012).toFixed(6))
+  const slug = `${typeInfo.slug}-${isRent ? 'rent' : 'sale'}-${location[1]}-${String(id).padStart(3, '0')}`
   const imageIndex = index % images.length
   const gallery = [images[imageIndex], images[(imageIndex + 1) % images.length], images[(imageIndex + 2) % images.length], images[(imageIndex + 3) % images.length]]
 
@@ -102,8 +101,8 @@ export const properties = Array.from({ length: 200 }, (_, index) => {
     lat,
     lng,
     tags: [typeInfo.label, location[0], isRent ? 'เช่า' : 'ขาย', tags[index % tags.length]],
-    summary: 'รายการเดโมสำหรับทดสอบเว็บอสังหา ครอบคลุมข้อมูลราคา ทำเล ภาพประกอบ และช่องทางติดต่อ เหมาะสำหรับพรีเซนต์ระบบให้ลูกค้าเห็นภาพการใช้งานจริง',
-    fullDescription: `${typeInfo.label}ทำเล${location[0]} รายการนี้สร้างไว้สำหรับเดโมระบบเว็บอสังหาแบบครบ flow ผู้ใช้สามารถดูภาพหลายมุม เปรียบเทียบข้อมูลเบื้องต้น เปิดหน้ารายละเอียดแยก แชร์ลิงก์ให้ลูกค้า และติดต่อผ่านโทรศัพท์ LINE หรืออีเมลได้ทันที`,
+    summary: 'อสังหาริมทรัพย์คัดสรรพร้อมข้อมูลราคา ทำเล ภาพประกอบ และช่องทางติดต่อครบ เหมาะสำหรับผู้ที่ต้องการเปรียบเทียบและนัดชมทรัพย์ได้อย่างสะดวก',
+    fullDescription: `${typeInfo.label}ทำเล${location[0]} รายการนี้มีข้อมูลสำคัญครบถ้วน ทั้งราคา พื้นที่ สถานะ รูปภาพหลายมุม และช่องทางติดต่อ เหมาะสำหรับผู้ที่ต้องการพิจารณาอสังหาริมทรัพย์ก่อนนัดหมายเข้าชมจริง`,
   }
 })
 
