@@ -21,6 +21,7 @@ import {
   X,
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { properties, propertyTypes } from './data/sampleProperties'
 
 const contact = {
   phone: '098-000-0000',
@@ -32,101 +33,6 @@ const listingModes = [
   { value: 'all', label: 'ทั้งหมด' },
   { value: 'sale', label: 'ซื้อ' },
   { value: 'rent', label: 'เช่า' },
-]
-
-const propertyTypes = [
-  { value: 'all', label: 'ทั้งหมด' },
-  { value: 'house', label: 'บ้านเดี่ยว' },
-  { value: 'townhome', label: 'ทาวน์โฮม' },
-  { value: 'commercial', label: 'อาคาร' },
-  { value: 'land', label: 'ที่ดินเปล่า' },
-]
-
-const properties = [
-  {
-    id: 1,
-    title: 'The Grand Courtyard Residence',
-    location: 'โคราช · ใกล้ถนนมิตรภาพ',
-    listingType: 'sale',
-    propertyType: 'house',
-    propertyLabel: 'บ้านเดี่ยว',
-    price: 'เริ่มต้น 4.59 ล้านบาท',
-    status: 'พร้อมเข้าอยู่',
-    coordinates: { lat: 14.9799, lng: 102.0977 },
-    image:
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=85',
-    specs: {
-      bedrooms: 4,
-      bathrooms: 4,
-      parking: 3,
-      area: '82 ตร.วา',
-      usable: '245 ตร.ม.',
-    },
-    highlight: 'บ้านเดี่ยวหลังใหญ่ ฟังก์ชันครบ เหมาะกับครอบครัวที่ต้องการพื้นที่ใช้ชีวิตจริง',
-  },
-  {
-    id: 2,
-    title: 'Serene Pool Villa',
-    location: 'เขาใหญ่ · บรรยากาศส่วนตัว',
-    listingType: 'sale',
-    propertyType: 'house',
-    propertyLabel: 'พูลวิลล่า',
-    price: 'เริ่มต้น 8.90 ล้านบาท',
-    status: 'เปิดจอง',
-    coordinates: { lat: 14.5639, lng: 101.3721 },
-    image:
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=85',
-    specs: {
-      bedrooms: 3,
-      bathrooms: 4,
-      parking: 2,
-      area: '96 ตร.วา',
-      usable: '310 ตร.ม.',
-    },
-    highlight: 'พูลวิลล่าส่วนตัว พร้อมพื้นที่พักผ่อนกลางแจ้งและมุมรับแขกเปิดโล่ง',
-  },
-  {
-    id: 3,
-    title: 'Minimal Urban Home',
-    location: 'ตัวเมืองนครราชสีมา · ใกล้ห้างและโรงเรียน',
-    listingType: 'rent',
-    propertyType: 'townhome',
-    propertyLabel: 'ทาวน์โฮม',
-    price: '25,000 บาท / เดือน',
-    status: 'ให้เช่า',
-    coordinates: { lat: 14.9837, lng: 102.1098 },
-    image:
-      'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=85',
-    specs: {
-      bedrooms: 3,
-      bathrooms: 3,
-      parking: 2,
-      area: '64 ตร.วา',
-      usable: '188 ตร.ม.',
-    },
-    highlight: 'บ้านโมเดิร์นเรียบง่าย ดูแลไม่ยาก เดินทางสะดวก เหมาะกับครอบครัวเริ่มต้น',
-  },
-  {
-    id: 4,
-    title: 'Prime Roadside Land',
-    location: 'โคราช · ติดถนนใหญ่ เหมาะลงทุน',
-    listingType: 'sale',
-    propertyType: 'land',
-    propertyLabel: 'ที่ดินเปล่า',
-    price: '8.90 ล้านบาท',
-    status: 'ขาย',
-    coordinates: { lat: 14.9455, lng: 102.0604 },
-    image:
-      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1400&q=85',
-    specs: {
-      bedrooms: 0,
-      bathrooms: 0,
-      parking: 0,
-      area: '2 ไร่ 1 งาน',
-      usable: 'ติดถนนใหญ่',
-    },
-    highlight: 'ที่ดินเปล่าทำเลติดถนน เหมาะสำหรับสร้างบ้าน โกดัง หรือถือระยะยาวเพื่อการลงทุน',
-  },
 ]
 
 const gallery = [
@@ -159,18 +65,18 @@ const gallery = [
 const sellingPoints = [
   {
     icon: Sparkles,
-    title: 'ดีไซน์เรียบหรู',
-    text: 'ใช้โทนอบอุ่น โปร่ง สะอาด และจัดสัดส่วนให้บ้านดูแพงตั้งแต่ภาพแรก',
+    title: 'ข้อมูลเดโม 200 รายการ',
+    text: 'มีรายการซื้อ เช่า บ้าน อาคาร ที่ดิน คอนโด โกดัง ออฟฟิศ อพาร์ตเมนต์ และพูลวิลล่าสำหรับทดสอบ flow จริง',
   },
   {
     icon: Trees,
-    title: 'พื้นที่ใช้ชีวิตจริง',
-    text: 'จัดฟังก์ชันห้องนั่งเล่น ครัว ห้องนอน และพื้นที่กลางแจ้งให้รองรับครอบครัว',
+    title: 'ค้นหาง่ายตามพฤติกรรมผู้ใช้',
+    text: 'เลือกซื้อ เช่า หรือทั้งหมด แล้วกรองประเภทอสังหาและพิมพ์ทำเลได้ทันทีโดยไม่ทำให้หน้าเว็บรก',
   },
   {
     icon: ShieldCheck,
-    title: 'น่าเชื่อถือ',
-    text: 'แสดงข้อมูลบ้าน ราคา ทำเล สถานะ และช่องทางติดต่อชัดเจน ลดความลังเลของผู้ซื้อ',
+    title: 'พร้อมเดโมให้ลูกค้าเห็นภาพ',
+    text: 'แสดงราคา ทำเล สถานะ ระยะทางใกล้ผู้ใช้ และช่องทางติดต่อชัดเจน เหมาะใช้พรีเซนต์เว็บอสังหา',
   },
 ]
 
@@ -203,6 +109,9 @@ const seoKeywords = [
   'ทาวน์โฮมโคราช',
   'ที่ดินเปล่าโคราช',
   'อาคารพาณิชย์โคราช',
+  'โกดังให้เช่าโคราช',
+  'คอนโดให้เช่า',
+  'ออฟฟิศให้เช่า',
   'อสังหาริมทรัพย์นครราชสีมา',
   'บ้านใกล้ฉัน',
   'บ้านพร้อมอยู่',
@@ -221,9 +130,9 @@ const faqItems = [
       'เมื่อผู้ใช้กดปุ่มใช้พิกัดของฉัน ระบบจะขออนุญาตจากเบราว์เซอร์ก่อน แล้วคำนวณระยะทางเพื่อจัดเรียงรายการอสังหาริมทรัพย์ที่อยู่ใกล้ผู้ใช้ขึ้นมาก่อน',
   },
   {
-    question: 'ต้องมีข้อมูลอะไรบ้างก่อนนัดชมบ้าน?',
+    question: 'ข้อมูลอสังหา 200 รายการเป็นข้อมูลจริงไหม?',
     answer:
-      'ควรดูราคา ทำเล ขนาดที่ดิน พื้นที่ใช้สอย จำนวนห้องนอน ห้องน้ำ ที่จอดรถ สถานะพร้อมอยู่หรือให้เช่า และติดต่อผ่าน LINE หรือโทรเพื่อยืนยันข้อมูลล่าสุด',
+      'ข้อมูลชุดนี้เป็นข้อมูลตัวอย่างสำหรับทดสอบระบบและใช้เดโมขายเว็บให้ลูกค้า ยังไม่ใช่ประกาศซื้อขายจริง จึงควรเปลี่ยนเป็นข้อมูลจริงก่อนใช้งานเชิงพาณิชย์',
   },
 ]
 
@@ -271,16 +180,18 @@ function App() {
       .filter((property) => propertyType === 'all' || property.propertyType === propertyType)
       .filter((property) => {
         if (!keyword) return true
-        return `${property.title} ${property.location} ${property.propertyLabel}`.toLowerCase().includes(keyword)
+        return `${property.title} ${property.location} ${property.propertyLabel} ${property.tags?.join(' ') ?? ''}`
+          .toLowerCase()
+          .includes(keyword)
       })
       .sort((a, b) => {
-        if (a.distanceKm === null || b.distanceKm === null) return 0
+        if (a.distanceKm === null || b.distanceKm === null) return a.id - b.id
         return a.distanceKm - b.distanceKm
       })
   }, [listingMode, propertyType, propertiesWithDistance, searchLocation])
 
-  const displayProperties = filteredProperties.length > 0 ? filteredProperties : propertiesWithDistance
-  const activePropertyDetails = propertiesWithDistance.find((property) => property.id === activeProperty.id) ?? activeProperty
+  const activePropertyDetails = propertiesWithDistance.find((property) => property.id === activeProperty.id) ?? propertiesWithDistance[0]
+  const displayProperties = filteredProperties
 
   const mainSpecs = useMemo(
     () => [
@@ -385,7 +296,7 @@ function App() {
               <div className="search-panel-header">
                 <span>ค้นหาอสังหา</span>
                 <h1 id="main-title">บ้านขาย บ้านเช่า โคราช และอสังหาริมทรัพย์ใกล้คุณ</h1>
-                <p>เลือกซื้อ เช่า หรือดูทั้งหมด แล้วกรองประเภทบ้าน อาคาร หรือที่ดินเปล่าได้ทันที</p>
+                <p>ข้อมูลตัวอย่าง {properties.length} รายการ เลือกซื้อ เช่า หรือดูทั้งหมด แล้วกรองประเภทบ้าน อาคาร ที่ดิน และทรัพย์ลงทุนได้ทันที</p>
               </div>
 
               <div className="segmented-control" aria-label="เลือกเช่า ซื้อ หรือทั้งหมด">
@@ -407,7 +318,7 @@ function App() {
                   type="text"
                   value={searchLocation}
                   onChange={(event) => setSearchLocation(event.target.value)}
-                  placeholder="เช่น โคราช, เขาใหญ่, ใกล้ห้าง"
+                  placeholder="เช่น โคราช, เขาใหญ่, กรุงเทพ, โกดัง, พูลวิลล่า"
                 />
               </label>
 
@@ -453,34 +364,41 @@ function App() {
             <p className="eyebrow dark">Selected Properties</p>
             <h2>รายการอสังหาที่ตรงกับการค้นหา</h2>
             <p>
-              พบ {filteredProperties.length} รายการจากตัวกรองปัจจุบัน
+              พบ {filteredProperties.length} รายการจากข้อมูลตัวอย่างทั้งหมด {properties.length} รายการ
               {userLocation ? ' · เรียงจากระยะใกล้ที่สุด' : ' · กดใช้พิกัดเพื่อดูรายการใกล้คุณ'}
             </p>
           </div>
 
-          <div className="property-grid">
-            {displayProperties.map((property) => (
-              <button
-                key={property.id}
-                className={`property-card ${property.id === activePropertyDetails.id ? 'active' : ''}`}
-                onClick={() => setActiveProperty(property)}
-              >
-                <img src={property.image} alt={`${property.propertyLabel} ${property.status} ${property.location} ${property.title}`} />
-                <div className="property-card-body">
-                  <div className="card-badges">
-                    <span>{property.status}</span>
-                    <span>{property.propertyLabel}</span>
+          {displayProperties.length > 0 ? (
+            <div className="property-grid">
+              {displayProperties.map((property) => (
+                <button
+                  key={property.id}
+                  className={`property-card ${property.id === activePropertyDetails.id ? 'active' : ''}`}
+                  onClick={() => setActiveProperty(property)}
+                >
+                  <img loading="lazy" src={property.image} alt={`${property.propertyLabel} ${property.status} ${property.location} ${property.title}`} />
+                  <div className="property-card-body">
+                    <div className="card-badges">
+                      <span>{property.status}</span>
+                      <span>{property.propertyLabel}</span>
+                    </div>
+                    <h3>{property.title}</h3>
+                    <p>
+                      <MapPin size={15} /> {property.location}
+                    </p>
+                    <strong>{property.price}</strong>
+                    {property.distanceKm !== null && <small>ห่างจากคุณประมาณ {property.distanceKm} กม.</small>}
                   </div>
-                  <h3>{property.title}</h3>
-                  <p>
-                    <MapPin size={15} /> {property.location}
-                  </p>
-                  <strong>{property.price}</strong>
-                  {property.distanceKm !== null && <small>ห่างจากคุณประมาณ {property.distanceKm} กม.</small>}
-                </div>
-              </button>
-            ))}
-          </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <h3>ไม่พบรายการที่ตรงกับตัวกรอง</h3>
+              <p>ลองเปลี่ยนคำค้นหา ทำเล หรือเลือกประเภทอสังหาเป็นทั้งหมด เพื่อดูข้อมูลตัวอย่างอีกครั้ง</p>
+            </div>
+          )}
         </section>
 
         <section className="gallery-section" id="แกลเลอรี">
@@ -509,10 +427,10 @@ function App() {
             <p className="large-text">{activePropertyDetails.highlight}</p>
             <ul className="check-list">
               <li>
-                <CheckCircle2 size={18} /> ภาพบ้านจริงควรถูกจัดเป็นหมวด Exterior, Living, Bedroom, Kitchen, Bathroom
+                <CheckCircle2 size={18} /> ข้อมูล 200 รายการเป็น mock data สำหรับทดสอบระบบ ไม่ใช่ประกาศจริง
               </li>
               <li>
-                <CheckCircle2 size={18} /> ข้อมูลสำคัญต้องอ่านจบได้ภายใน 5–10 วินาที
+                <CheckCircle2 size={18} /> กรองได้ตาม ซื้อ เช่า ประเภทอสังหา ทำเล และคำค้นหา
               </li>
               <li>
                 <CheckCircle2 size={18} /> ปุ่ม LINE / โทร / นัดชมบ้าน ต้องเห็นชัดทั้งเดสก์ท็อปและมือถือ
@@ -574,7 +492,7 @@ function App() {
 
           <div className="seo-keywords" aria-label="คำค้นหาที่เกี่ยวข้อง">
             {seoKeywords.map((keyword) => (
-              <a key={keyword} href="#บ้านเด่น">
+              <a key={keyword} href="#บ้านเด่น" onClick={() => setSearchLocation(keyword)}>
                 {keyword}
               </a>
             ))}
@@ -680,7 +598,7 @@ function App() {
           <Building2 size={22} />
           <span>ALPHA ESTATE</span>
         </div>
-        <p>บ้านขาย บ้านเช่า ที่ดินเปล่า และอาคารพาณิชย์โคราช · Built with React + Vite</p>
+        <p>บ้านขาย บ้านเช่า ที่ดินเปล่า และอาคารพาณิชย์โคราช · Demo data {properties.length} listings · Built with React + Vite</p>
       </footer>
 
       <div className="sticky-cta" aria-label="Quick contact">
