@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://luxury-house-website-orcin.vercel.app/</loc><lastmod>2026-06-21</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
-  <url><loc>https://luxury-house-website-orcin.vercel.app/property/house-rent-korat-city-001</loc><lastmod>2026-06-21</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://luxury-house-website-orcin.vercel.app/property/townhome-sale-mittraphap-002</loc><lastmod>2026-06-21</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://luxury-house-website-orcin.vercel.app/property/commercial-sale-hua-thale-003</loc><lastmod>2026-06-21</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://luxury-house-website-orcin.vercel.app/property/land-sale-joho-004</loc><lastmod>2026-06-21</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://luxury-house-website-orcin.vercel.app/property/condo-sale-saveone-005</loc><lastmod>2026-06-21</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://luxury-house-website-orcin.vercel.app/property/warehouse-sale-sung-noen-006</loc><lastmod>2026-06-21</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://luxury-house-website-orcin.vercel.app/property/office-rent-pakchong-007</loc><lastmod>2026-06-21</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://luxury-house-website-orcin.vercel.app/property/apartment-sale-khaoyai-008</loc><lastmod>2026-06-21</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://luxury-house-website-orcin.vercel.app/property/villa-sale-wang-nam-khiao-009</loc><lastmod>2026-06-21</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url>
+    <loc>https://luxury-house-website.vercel.app/</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
 </urlset>
