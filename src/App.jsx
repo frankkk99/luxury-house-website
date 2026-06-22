@@ -1,52 +1,192 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { featuredProperties, properties, propertyTypes } from './data/properties.js'
+import { useMemo, useState } from 'react'
+import {
+  ArrowRight,
+  Bath,
+  BedDouble,
+  Building2,
+  CalendarCheck,
+  Car,
+  CheckCircle2,
+  ChevronRight,
+  House,
+  LandPlot,
+  Mail,
+  MapPin,
+  Menu,
+  MessageCircle,
+  Phone,
+  Ruler,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Trees,
+  X,
+} from 'lucide-react'
 
 const contact = {
   brand: 'ALPHA ESTATE',
-  creator: 'Frank Creative / AlphaLab',
   phone: '080-899-8155',
-  email: 'am2.production29@gmail.com',
+  phoneHref: '0808998155',
+  email: 'alphalab.official.th@gmail.com',
   lineUrl: 'https://line.me/R/ti/p/@alphalab.official.th',
-  portfolio: 'https://www.frankcreative.site/',
 }
 
 const intentOptions = [
-  { value: 'sale', label: 'ซื้อ', note: 'ค้นหาบ้าน ที่ดิน หรืออสังหาสำหรับเป็นเจ้าของ' },
-  { value: 'rent', label: 'เช่า', note: 'ค้นหาที่พักอาศัย ออฟฟิศ หรือพื้นที่ธุรกิจพร้อมใช้งาน' },
+  { value: 'all', label: 'ทั้งหมด' },
+  { value: 'sale', label: 'ซื้อ' },
+  { value: 'rent', label: 'เช่า' },
 ]
 
-const typeOptions = propertyTypes.filter((type) => type.value !== 'all')
-const priceOptions = [
-  { value: 'all', label: 'ทุกงบ' },
-  { value: 'starter', label: 'เริ่มต้น' },
-  { value: 'mid', label: 'กลาง' },
-  { value: 'premium', label: 'พรีเมียม' },
-  { value: 'luxury', label: 'ลักชัวรี' },
+const typeOptions = [
+  { value: 'all', label: 'ทั้งหมด' },
+  { value: 'house', label: 'บ้านเดี่ยว' },
+  { value: 'townhome', label: 'ทาวน์โฮม' },
+  { value: 'land', label: 'ที่ดินเปล่า' },
+  { value: 'commercial', label: 'อาคารพาณิชย์' },
+  { value: 'villa', label: 'พูลวิลล่า' },
 ]
 
-const normalize = (value) => String(value ?? '').toLowerCase().replace(/\s+/g, '')
+const properties = [
+  {
+    id: 1,
+    title: 'The Grand Courtyard Residence',
+    location: 'โคราช · ใกล้ถนนมิตรภาพ',
+    area: 'ตัวเมืองนครราชสีมา',
+    listingType: 'sale',
+    propertyType: 'house',
+    propertyLabel: 'บ้านเดี่ยว',
+    priceText: '4.59 ล้านบาท',
+    status: 'พร้อมนัดชม',
+    coordinates: { lat: 14.9799, lng: 102.0977 },
+    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
+    specs: { bedrooms: 4, bathrooms: 4, parking: 3, land: '82 ตร.วา', usable: '245 ตร.ม.' },
+    highlight: 'บ้านเดี่ยวหลังใหญ่ ฟังก์ชันครบ มีคอร์ทยาร์ดกลางบ้าน เหมาะกับครอบครัวที่ต้องการพื้นที่ใช้ชีวิตจริง',
+    description: 'เหมาะสำหรับคนที่ต้องการบ้านพร้อมอยู่ในเมือง เดินทางสะดวก ใกล้ถนนหลัก ห้าง โรงเรียน และโรงพยาบาล พร้อมพื้นที่สวนส่วนตัวและที่จอดรถหลายคัน',
+    tags: ['บ้านขายโคราช', 'บ้านพร้อมอยู่', 'บ้านเดี่ยว', 'ถนนมิตรภาพ'],
+  },
+  {
+    id: 2,
+    title: 'Serene Pool Villa Khao Yai',
+    location: 'เขาใหญ่ · บรรยากาศส่วนตัว',
+    area: 'เขาใหญ่',
+    listingType: 'sale',
+    propertyType: 'villa',
+    propertyLabel: 'พูลวิลล่า',
+    priceText: '8.90 ล้านบาท',
+    status: 'เปิดจอง',
+    coordinates: { lat: 14.5639, lng: 101.3721 },
+    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=85',
+    specs: { bedrooms: 3, bathrooms: 4, parking: 2, land: '96 ตร.วา', usable: '310 ตร.ม.' },
+    highlight: 'พูลวิลล่าส่วนตัว โทนอบอุ่น มีพื้นที่พักผ่อนกลางแจ้ง เหมาะทั้งอยู่อาศัยและปล่อยเช่ารายวัน',
+    description: 'ออกแบบให้รับวิวธรรมชาติและแสงธรรมชาติ เหมาะกับครอบครัว นักลงทุน หรือผู้ที่ต้องการบ้านพักตากอากาศในทำเลเขาใหญ่',
+    tags: ['พูลวิลล่า', 'เขาใหญ่', 'บ้านพักตากอากาศ', 'ลงทุน'],
+  },
+  {
+    id: 3,
+    title: 'Minimal Urban Townhome',
+    location: 'เมืองโคราช · ใกล้ห้างและโรงเรียน',
+    area: 'ตัวเมืองนครราชสีมา',
+    listingType: 'rent',
+    propertyType: 'townhome',
+    propertyLabel: 'ทาวน์โฮม',
+    priceText: '25,000 บาท / เดือน',
+    status: 'ให้เช่า',
+    coordinates: { lat: 14.9837, lng: 102.1098 },
+    image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1600&q=85',
+    specs: { bedrooms: 3, bathrooms: 3, parking: 2, land: '42 ตร.วา', usable: '188 ตร.ม.' },
+    highlight: 'ทาวน์โฮมโมเดิร์น ดูแลง่าย เดินทางสะดวก เหมาะกับครอบครัวเริ่มต้นหรือทีมทำงานในเมือง',
+    description: 'บ้านให้เช่าพร้อมเฟอร์บางส่วน พื้นที่ใช้สอยลงตัว ใกล้สิ่งอำนวยความสะดวก และมีพื้นที่จอดรถในตัว',
+    tags: ['บ้านเช่าโคราช', 'ทาวน์โฮม', 'เช่าบ้าน', 'ใกล้ห้าง'],
+  },
+  {
+    id: 4,
+    title: 'Prime Roadside Land',
+    location: 'โคราช · ติดถนนใหญ่ เหมาะลงทุน',
+    area: 'ถนนมิตรภาพ',
+    listingType: 'sale',
+    propertyType: 'land',
+    propertyLabel: 'ที่ดินเปล่า',
+    priceText: '8.90 ล้านบาท',
+    status: 'ขาย',
+    coordinates: { lat: 14.9455, lng: 102.0604 },
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=85',
+    specs: { bedrooms: 0, bathrooms: 0, parking: 0, land: '2 ไร่ 1 งาน', usable: 'ติดถนนใหญ่' },
+    highlight: 'ที่ดินเปล่าทำเลติดถนน เหมาะสำหรับสร้างบ้าน โกดัง อาคารพาณิชย์ หรือถือระยะยาวเพื่อการลงทุน',
+    description: 'หน้ากว้างติดถนน เข้าออกสะดวก เหมาะกับผู้ที่กำลังมองหาที่ดินเพื่อทำธุรกิจหรือพัฒนาโครงการในอนาคต',
+    tags: ['ที่ดินเปล่าโคราช', 'ที่ดินติดถนน', 'ลงทุน', 'ถนนใหญ่'],
+  },
+  {
+    id: 5,
+    title: 'Commercial Corner Building',
+    location: 'เซฟวัน · ทำเลค้าขาย',
+    area: 'เซฟวัน',
+    listingType: 'sale',
+    propertyType: 'commercial',
+    propertyLabel: 'อาคารพาณิชย์',
+    priceText: '6.80 ล้านบาท',
+    status: 'นัดชมได้',
+    coordinates: { lat: 14.9468, lng: 102.0527 },
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=85',
+    specs: { bedrooms: 2, bathrooms: 3, parking: 2, land: '24 ตร.วา', usable: '220 ตร.ม.' },
+    highlight: 'อาคารพาณิชย์หัวมุม เหมาะกับหน้าร้าน ออฟฟิศ หรือธุรกิจที่ต้องการทำเลใกล้แหล่งคนพลุกพล่าน',
+    description: 'ตำแหน่งดี มองเห็นง่าย เหมาะสำหรับทำธุรกิจหน้าร้านหรือปล่อยเช่า พร้อมพื้นที่ชั้นบนสำหรับพักอาศัยหรือเก็บสินค้า',
+    tags: ['อาคารพาณิชย์โคราช', 'เซฟวัน', 'ตึกแถว', 'ค้าขาย'],
+  },
+  {
+    id: 6,
+    title: 'Garden Family Home',
+    location: 'จอหอ · โซนอยู่อาศัยเงียบสงบ',
+    area: 'จอหอ',
+    listingType: 'sale',
+    propertyType: 'house',
+    propertyLabel: 'บ้านเดี่ยว',
+    priceText: '3.95 ล้านบาท',
+    status: 'พร้อมเข้าอยู่',
+    coordinates: { lat: 15.0378, lng: 102.1072 },
+    image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=85',
+    specs: { bedrooms: 3, bathrooms: 3, parking: 2, land: '65 ตร.วา', usable: '190 ตร.ม.' },
+    highlight: 'บ้านครอบครัวพร้อมสวน บรรยากาศสงบ เหมาะกับคนที่อยากได้พื้นที่ส่วนตัวแต่ยังเดินทางเข้าเมืองสะดวก',
+    description: 'พื้นที่ใช้สอยครบ ห้องนอนใหญ่ ห้องรับแขก ครัว และสวนรอบบ้าน เหมาะกับครอบครัวที่กำลังมองหาบ้านหลังแรก',
+    tags: ['บ้านเดี่ยวจอหอ', 'บ้านครอบครัว', 'บ้านพร้อมสวน', 'พร้อมเข้าอยู่'],
+  },
+]
+
+const galleryItems = [
+  { label: 'Facade', title: 'ภายนอกบ้าน', image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85' },
+  { label: 'Living', title: 'ห้องรับแขก', image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=85' },
+  { label: 'Kitchen', title: 'ครัวและพื้นที่ทานอาหาร', image: 'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?auto=format&fit=crop&w=1200&q=85' },
+  { label: 'Bedroom', title: 'ห้องนอนใหญ่', image: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1200&q=85' },
+]
+
+const sellingPoints = [
+  { icon: Sparkles, title: 'ภาพต้องขายก่อนข้อความ', text: 'วางภาพใหญ่ คุมแสง สี และระยะห่างให้บ้านดูแพงตั้งแต่ช่วงแรกที่เข้าเว็บ' },
+  { icon: ShieldCheck, title: 'ข้อมูลอ่านง่าย', text: 'ราคา ทำเล สถานะ ขนาดพื้นที่ และปุ่มติดต่ออยู่ในตำแหน่งที่ผู้ซื้อเห็นได้ทันที' },
+  { icon: CalendarCheck, title: 'นำไปสู่นัดชมบ้าน', text: 'ออกแบบปุ่ม LINE โทร และฟอร์มติดต่อให้ใช้งานง่ายทั้งมือถือและเดสก์ท็อป' },
+]
+
+const seoCards = [
+  { title: 'บ้านขายโคราช', text: 'รวมบ้านเดี่ยว ทาวน์โฮม และพูลวิลล่าในนครราชสีมา สำหรับผู้ที่ต้องการซื้อบ้านพร้อมอยู่หรือบ้านเพื่อการลงทุน' },
+  { title: 'บ้านเช่าโคราช', text: 'ค้นหาบ้านเช่าและทาวน์โฮมให้เช่าในตัวเมืองโคราช พร้อมข้อมูลค่าเช่า ทำเล จำนวนห้อง และช่องทางสอบถามทันที' },
+  { title: 'ที่ดินและอาคารพาณิชย์', text: 'เหมาะสำหรับคนที่ต้องการที่ดินเปล่า อาคารพาณิชย์ หรือทรัพย์เพื่อทำธุรกิจ โกดัง ออฟฟิศ และการลงทุนระยะยาว' },
+]
+
+const relatedKeywords = ['บ้านขายโคราช', 'บ้านเช่าโคราช', 'บ้านเดี่ยวโคราช', 'ทาวน์โฮมโคราช', 'ที่ดินเปล่าโคราช', 'อาคารพาณิชย์โคราช', 'บ้านพร้อมอยู่', 'อสังหาเขาใหญ่']
+
+const faqs = [
+  { question: 'เว็บนี้เหมาะกับอสังหาประเภทไหน?', answer: 'เหมาะกับบ้านขาย บ้านเช่า ที่ดินเปล่า อาคารพาณิชย์ พูลวิลล่า และทรัพย์เพื่อการลงทุนที่ต้องการภาพสวย รายละเอียดชัด และช่องทางติดต่อเร็ว' },
+  { question: 'ปุ่มใช้พิกัดทำงานอย่างไร?', answer: 'ระบบจะขออนุญาตจากเบราว์เซอร์ก่อน แล้วคำนวณระยะทางโดยประมาณเพื่อเรียงรายการที่อยู่ใกล้ผู้ใช้ขึ้นมาก่อน' },
+  { question: 'ถ้าจะใช้ขายจริงควรเพิ่มอะไร?', answer: 'ควรเพิ่มรูปจริงของแต่ละทรัพย์ สถานะล่าสุด รายละเอียดกรรมสิทธิ์ แผนที่จริง และระบบจัดการข้อมูลจาก Google Sheets หรือ Supabase' },
+]
+
+const nearby = [
+  ['ถนนหลัก', '3 นาที'],
+  ['ห้างสรรพสินค้า', '8 นาที'],
+  ['โรงพยาบาล', '10 นาที'],
+  ['โรงเรียน', '12 นาที'],
+]
+
 const toRad = (value) => (value * Math.PI) / 180
-
-const aliases = [
-  { match: ['บ้านขาย', 'ซื้อบ้าน', 'บ้านพร้อมอยู่'], terms: ['บ้าน', 'บ้านเดี่ยว', 'ทาวน์โฮม', 'ขาย', 'ซื้อ'] },
-  { match: ['บ้านเช่า', 'เช่าบ้าน'], terms: ['บ้าน', 'บ้านเดี่ยว', 'ทาวน์โฮม', 'เช่า', 'ให้เช่า'] },
-  { match: ['ที่ดิน', 'ที่เปล่า'], terms: ['ที่ดิน', 'ที่ดินเปล่า', 'ขาย'] },
-  { match: ['อาคารพาณิชย์', 'ตึกแถว'], terms: ['อาคารพาณิชย์', 'อาคาร', 'ธุรกิจ'] },
-  { match: ['โกดัง', 'โรงงาน'], terms: ['โกดัง', 'โรงงาน', 'คลังสินค้า'] },
-  { match: ['ออฟฟิศ', 'สำนักงาน'], terms: ['ออฟฟิศ', 'สำนักงาน'] },
-  { match: ['คอนโด'], terms: ['คอนโด'] },
-  { match: ['พูลวิลล่า', 'วิลล่า'], terms: ['พูลวิลล่า', 'วิลล่า', 'เขาใหญ่', 'ภูเก็ต', 'หัวหิน'] },
-  { match: ['โคราช', 'นครราชสีมา'], terms: ['โคราช', 'นครราชสีมา', 'ตัวเมืองนครราชสีมา', 'ถนนมิตรภาพ', 'เซฟวัน'] },
-  { match: ['ใกล้ฉัน'], terms: ['โคราช', 'นครราชสีมา', 'กรุงเทพ', 'เขาใหญ่'] },
-]
-
-const defaultUi = {
-  cardWidth: 320,
-  cardHeight: 220,
-  heroHeight: 88,
-  sectionGap: 38,
-  topOpacity: 26,
-}
 
 const getDistanceKm = (from, to) => {
   const radius = 6371
@@ -58,510 +198,345 @@ const getDistanceKm = (from, to) => {
   return Number((radius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))).toFixed(1))
 }
 
-const buildTerms = (keyword) => {
-  const raw = keyword.trim().toLowerCase()
-  const compact = normalize(raw)
-  if (!compact) return []
-  const terms = new Set([raw, compact, ...raw.split(/[\s,]+/).filter(Boolean)])
-  aliases.forEach((alias) => {
-    if (alias.match.some((word) => compact.includes(normalize(word)))) {
-      alias.terms.forEach((term) => terms.add(term))
-    }
-  })
-  return Array.from(terms).map(normalize).filter((term) => term.length > 1)
-}
-
-const loadUi = () => {
-  try {
-    const saved = localStorage.getItem('estate-flow-ui')
-    return saved ? { ...defaultUi, ...JSON.parse(saved) } : defaultUi
-  } catch {
-    return defaultUi
-  }
-}
-
-function applyUi(settings) {
-  const root = document.documentElement
-  root.style.setProperty('--flow-card-width', `${settings.cardWidth}px`)
-  root.style.setProperty('--flow-card-img', `${settings.cardHeight}px`)
-  root.style.setProperty('--flow-hero-height', `${settings.heroHeight}vh`)
-  root.style.setProperty('--flow-section-gap', `${settings.sectionGap}px`)
-  root.style.setProperty('--flow-top-opacity', `${settings.topOpacity / 100}`)
-}
-
-function priceMatches(property, priceRange) {
-  if (priceRange === 'all') return true
-  const isRent = property.listingType === 'rent'
-  const price = property.price
-  if (priceRange === 'starter') return isRent ? price <= 30000 : price <= 3000000
-  if (priceRange === 'mid') return isRent ? price > 30000 && price <= 50000 : price > 3000000 && price <= 6000000
-  if (priceRange === 'premium') return isRent ? price > 50000 && price <= 80000 : price > 6000000 && price <= 10000000
-  if (priceRange === 'luxury') return isRent ? price > 80000 : price > 10000000
-  return true
-}
-
-function TransparentSearchBar({ query, onQuery, onSearch, theme, onTheme, onBack, currentStep }) {
-  const showSearch = currentStep !== 'detail'
-  return (
-    <header className={`flowTopBar step-${currentStep}`}>
-      <button className="brandChip" onClick={() => window.location.assign('/')}>
-        <span>AE</span>
-        <strong>ALPHA ESTATE</strong>
-      </button>
-      {showSearch && (
-        <form className="topSearch" onSubmit={(event) => { event.preventDefault(); onSearch?.() }}>
-          <input value={query} onChange={(event) => onQuery(event.target.value)} placeholder="ค้นหาทำเล บ้าน ที่ดิน อาคาร หรือคอนโด" />
-          <button>ค้นหา</button>
-        </form>
-      )}
-      <div className="topTools">
-        {['types', 'detail'].includes(currentStep) && <button onClick={onBack}>ย้อนกลับ</button>}
-        <button onClick={onTheme}>{theme === 'dark' ? '☀️ สว่าง' : '🌙 มืด'}</button>
-        <a href={`tel:${contact.phone}`}>โทร</a>
-      </div>
-    </header>
-  )
-}
-
-function UiPanel({ visible, settings, onChange, onReset, onClose }) {
-  if (!visible) return null
-  const controls = [
-    ['heroHeight', 'ความสูงหน้าแรก', 72, 112, 'vh'],
-    ['cardWidth', 'ความกว้างการ์ด', 220, 380, 'px'],
-    ['cardHeight', 'ความสูงภาพการ์ด', 160, 260, 'px'],
-    ['sectionGap', 'ช่องไฟแต่ละส่วน', 24, 96, 'px'],
-    ['topOpacity', 'ความโปร่งแถบบน', 8, 72, '%'],
-  ]
-  return (
-    <aside className="flowEditor">
-      <div className="flowEditorHead">
-        <div>
-          <p>UI EDIT MODE</p>
-          <h2>ปรับขนาดแบบสด</h2>
-        </div>
-        <button onClick={onClose}>×</button>
-      </div>
-      {controls.map(([key, label, min, max, suffix]) => (
-        <label key={key} className="flowRange">
-          <span>{label}<b>{settings[key]}{suffix}</b></span>
-          <input type="range" min={min} max={max} value={settings[key]} onChange={(event) => onChange(key, Number(event.target.value))} />
-        </label>
-      ))}
-      <button className="resetUi" onClick={onReset}>รีเซ็ต</button>
-    </aside>
-  )
-}
-
-function IntentScreen({ onChoose }) {
-  return (
-    <section className="intentScreen">
-      <div className="intentInner">
-        <p className="flowEyebrow">START YOUR SEARCH</p>
-        <h1>ต้องการซื้อหรือเช่า?</h1>
-        <div className="intentChoices">
-          {intentOptions.map((option) => (
-            <button key={option.value} onClick={() => onChoose(option.value)}>
-              <span>{option.label}</span>
-              <small>{option.note}</small>
-            </button>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function TypeScreen({ intent, selectedTypes, onToggleType, onNext, onBack }) {
-  const intentLabel = intent === 'rent' ? 'เช่า' : 'ซื้อ'
-  return (
-    <section className="typeScreen">
-      <div className="typeInner">
-        <p className="flowEyebrow">STEP 2</p>
-        <h1>เลือกประเภทอสังหาที่ต้องการ{intentLabel}</h1>
-        <p>เลือกได้หลายประเภท แล้วระบบจะจัดกลุ่มรายการแนะนำให้ดูเป็นแถว carousel</p>
-        <div className="typeGridSelect">
-          {typeOptions.map((type) => (
-            <button key={type.value} className={selectedTypes.includes(type.value) ? 'active' : ''} onClick={() => onToggleType(type.value)}>
-              {type.label}
-            </button>
-          ))}
-        </div>
-        <div className="stepActions">
-          <button className="softButton" onClick={onBack}>ย้อนกลับ</button>
-          <button className="mainButton" onClick={onNext}>{selectedTypes.length ? `ดู ${selectedTypes.length} ประเภทที่เลือก` : 'ดูทั้งหมด'}</button>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function PropertyCard({ property, onOpen }) {
-  return (
-    <article className="flowCard">
-      <button className="flowPoster" onClick={() => onOpen(property)} aria-label={`ดู ${property.title}`}>
-        <img src={property.image} alt={`${property.propertyLabel} ${property.location}`} loading="lazy" />
-        <span>{property.listingLabel}</span>
-      </button>
-      <div className="flowCardInfo">
-        <small>{property.propertyLabel} · {property.location}</small>
-        <h3>{property.title}</h3>
-        <strong>{property.priceText}</strong>
-        <p>{property.distance !== null && property.distance !== undefined ? `ใกล้คุณประมาณ ${property.distance} กม.` : property.status}</p>
-      </div>
-    </article>
-  )
-}
-
-function CarouselRow({ number, title, subtitle, items, onOpen, action }) {
-  if (!items.length) return null
-  return (
-    <section className="flowCarousel">
-      <div className="flowRowHead">
-        <div>
-          <span>{number}</span>
-          <div>
-            <h2>{title}</h2>
-            <p>{subtitle}</p>
-          </div>
-        </div>
-        {action}
-      </div>
-      <div className="flowRowScroll">
-        {items.map((property) => <PropertyCard key={`${title}-${property.id}`} property={property} onOpen={onOpen} />)}
-      </div>
-    </section>
-  )
-}
-
-function FilterBar({ intent, onIntentChange, selectedTypes, onToggleType, priceRange, onPriceChange, onClear }) {
-  return (
-    <div className="quickFilterBar">
-      <div className="filterGroup intentFilter" aria-label="เลือกซื้อหรือเช่า">
-        <button className={!intent ? 'active' : ''} onClick={() => onIntentChange('')}>ทั้งหมด</button>
-        {intentOptions.map((option) => (
-          <button key={option.value} className={intent === option.value ? 'active' : ''} onClick={() => onIntentChange(option.value)}>{option.label}</button>
-        ))}
-      </div>
-      <div className="filterGroup typeFilter" aria-label="เลือกประเภทอสังหา">
-        {typeOptions.slice(0, 7).map((type) => (
-          <button key={type.value} className={selectedTypes.includes(type.value) ? 'active' : ''} onClick={() => onToggleType(type.value)}>{type.label}</button>
-        ))}
-      </div>
-      <div className="filterGroup priceFilter" aria-label="เลือกช่วงราคา">
-        {priceOptions.map((option) => (
-          <button key={option.value} className={priceRange === option.value ? 'active' : ''} onClick={() => onPriceChange(option.value)}>{option.label}</button>
-        ))}
-        <button className="clearFilter" onClick={onClear}>ล้าง</button>
-      </div>
-    </div>
-  )
-}
-
-function ResultsScreen({ rows, onOpen, onLocation, geoStatus, selectedTypes, intent, onIntentChange, onToggleType, priceRange, onPriceChange, onClearFilters, total }) {
-  const headline = intent === 'rent' ? 'อสังหาให้เช่าที่คัดมาให้' : intent === 'sale' ? 'อสังหาน่าซื้อที่คัดมาให้' : 'อสังหาแนะนำสำหรับคุณ'
-  return (
-    <section className="resultsScreen listingFirstScreen">
-      <div className="resultsIntro">
-        <p className="flowEyebrow">ALPHA ESTATE</p>
-        <h1>{headline}</h1>
-        <p>{total} รายการ · เลือกซื้อ/เช่า ประเภท และงบประมาณได้ทันที</p>
-      </div>
-      <FilterBar
-        intent={intent}
-        onIntentChange={onIntentChange}
-        selectedTypes={selectedTypes}
-        onToggleType={onToggleType}
-        priceRange={priceRange}
-        onPriceChange={onPriceChange}
-        onClear={onClearFilters}
-      />
-      <div className="flowRows">
-        {rows.map((row, index) => (
-          <CarouselRow
-            key={row.key}
-            number={String(index + 1).padStart(2, '0')}
-            title={row.title}
-            subtitle={row.subtitle}
-            items={row.items}
-            onOpen={onOpen}
-            action={row.key === 'nearby' ? <button className="miniAction" onClick={onLocation}>{geoStatus || 'ใช้พิกัด'}</button> : null}
-          />
-        ))}
-      </div>
-      <footer className="resultsContactFooter">
-        <span>ALPHA ESTATE</span>
-        <a href={contact.lineUrl} target="_blank" rel="noreferrer">LINE</a>
-        <a href={`tel:${contact.phone}`}>{contact.phone}</a>
-        <a href={`mailto:${contact.email}`}>{contact.email}</a>
-      </footer>
-      <div className="mobileResultContactBar">
-        <a href={contact.lineUrl} target="_blank" rel="noreferrer">LINE</a>
-        <a href={`tel:${contact.phone}`}>โทร</a>
-      </div>
-    </section>
-  )
-}
-
-function PropertyModal({ property, onClose }) {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const touchStartX = useRef(null)
-  const gallery = property?.gallery?.length ? property.gallery : property ? [property.image].filter(Boolean) : []
-
-  useEffect(() => {
-    setActiveIndex(0)
-  }, [property?.id])
-
-  if (!property) return null
-
-  const openFull = () => window.open(`/property/${property.slug}`, '_blank', 'noopener,noreferrer')
-  const goTo = (direction) => setActiveIndex((current) => (current + direction + gallery.length) % gallery.length)
-  const onTouchStart = (event) => { touchStartX.current = event.touches[0].clientX }
-  const onTouchEnd = (event) => {
-    if (touchStartX.current === null || gallery.length < 2) return
-    const diff = touchStartX.current - event.changedTouches[0].clientX
-    if (Math.abs(diff) > 36) goTo(diff > 0 ? 1 : -1)
-    touchStartX.current = null
-  }
-
-  return (
-    <div className="flowModalBackdrop" role="dialog" aria-modal="true" onClick={onClose}>
-      <article className="flowModal" onClick={(event) => event.stopPropagation()}>
-        <button className="flowClose" onClick={onClose}>×</button>
-        <div className="modalImageStage" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-          <img src={gallery[activeIndex]} alt={property.title} loading="lazy" />
-          {gallery.length > 1 && (
-            <>
-              <button className="modalNav prev" onClick={() => goTo(-1)} aria-label="รูปก่อนหน้า">‹</button>
-              <button className="modalNav next" onClick={() => goTo(1)} aria-label="รูปถัดไป">›</button>
-              <div className="modalDots">{gallery.map((image, index) => <button key={image} className={index === activeIndex ? 'active' : ''} onClick={() => setActiveIndex(index)} aria-label={`ดูรูป ${index + 1}`} />)}</div>
-            </>
-          )}
-        </div>
-        <div className="flowModalContent">
-          <span className="statusPill">{property.listingLabel}</span>
-          <h2>{property.title}</h2>
-          <p>{property.location} · {property.propertyLabel}</p>
-          <strong>{property.priceText}</strong>
-          <div className="factLine">
-            <span>{property.landSize}</span>
-            <span>{property.usableArea}</span>
-            <span>{property.status}</span>
-          </div>
-          <p>{property.summary}</p>
-          <div className="modalButtons">
-            <button onClick={openFull}>เปิดดูข้อมูลเต็ม</button>
-            <a href={contact.lineUrl} target="_blank" rel="noreferrer">LINE</a>
-            <a href={`tel:${contact.phone}`}>โทร</a>
-          </div>
-        </div>
-      </article>
-    </div>
-  )
-}
-
-function DetailPage({ property, related, theme, onTheme }) {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const gallery = property?.gallery?.length ? property.gallery : [property?.image].filter(Boolean)
-
-  useEffect(() => {
-    if (!gallery.length) return undefined
-    const timer = window.setInterval(() => setActiveIndex((current) => (current + 1) % gallery.length), 4200)
-    return () => window.clearInterval(timer)
-  }, [gallery.length])
-
-  useEffect(() => {
-    if (!property) return
-    document.title = `${property.title} | ${property.priceText} | ALPHA ESTATE`
-  }, [property])
-
-  if (!property) {
-    return <main className="detailShell"><section className="emptyDetail"><h1>ไม่พบข้อมูลทรัพย์นี้</h1><a href="/">กลับหน้าแรก</a></section></main>
-  }
-
-  return (
-    <main className="detailShell compactDetailShell">
-      <TransparentSearchBar query="" onQuery={() => {}} onSearch={() => {}} theme={theme} onTheme={onTheme} currentStep="detail" onBack={() => window.location.assign('/')} />
-      <section className="propertyHeroDetail">
-        <img src={gallery[activeIndex]} alt={property.title} />
-        <div className="detailOverlayText">
-          <span className="statusPill">{property.listingLabel}</span>
-          <h1>{property.title}</h1>
-          <p>{property.location} · {property.propertyLabel}</p>
-          <strong>{property.priceText}</strong>
-        </div>
-      </section>
-
-      <div className="detailThumbs">
-        {gallery.map((image, index) => (
-          <button key={image} className={index === activeIndex ? 'active' : ''} onClick={() => setActiveIndex(index)}>
-            <img src={image} alt={`${property.title} ${index + 1}`} loading="lazy" />
-          </button>
-        ))}
-      </div>
-
-      <section className="detailInfoGrid">
-        <div>
-          <p className="flowEyebrow">DETAIL</p>
-          <h2>รายละเอียดทรัพย์</h2>
-          <p>{property.fullDescription || property.summary}</p>
-        </div>
-        <aside>
-          <span>{property.landSize}</span>
-          <span>{property.usableArea}</span>
-          <span>{property.status}</span>
-          {property.bedrooms > 0 && <span>{property.bedrooms} ห้องนอน</span>}
-          {property.bathrooms > 0 && <span>{property.bathrooms} ห้องน้ำ</span>}
-        </aside>
-      </section>
-
-      <section className="autoRecommend">
-        <CarouselRow number="01" title="อสังหาแนะนำ" subtitle="เลื่อนอัตโนมัติจากรายการใกล้เคียง" items={[...related, ...related].slice(0, 24)} onOpen={(item) => window.open(`/property/${item.slug}`, '_blank', 'noopener,noreferrer')} />
-      </section>
-
-      <footer className="detailStickyContact">
-        <a href={contact.lineUrl} target="_blank" rel="noreferrer">ติดต่อ LINE</a>
-        <a href={`tel:${contact.phone}`}>โทร {contact.phone}</a>
-      </footer>
-    </main>
-  )
-}
-
 function App() {
-  const detailSlug = window.location.pathname.startsWith('/property/')
-    ? decodeURIComponent(window.location.pathname.replace('/property/', '').replace(/\/$/, ''))
-    : null
-  const detailProperty = useMemo(() => properties.find((property) => property.slug === detailSlug), [detailSlug])
-  const [theme, setTheme] = useState(() => localStorage.getItem('estate-theme') || 'light')
-  const [step, setStep] = useState('results')
-  const [intent, setIntent] = useState('')
-  const [selectedTypes, setSelectedTypes] = useState([])
-  const [priceRange, setPriceRange] = useState('all')
+  const [selectedProperty, setSelectedProperty] = useState(properties[0])
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [intent, setIntent] = useState('all')
+  const [type, setType] = useState('all')
   const [query, setQuery] = useState('')
-  const [selectedProperty, setSelectedProperty] = useState(null)
   const [userLocation, setUserLocation] = useState(null)
-  const [geoStatus, setGeoStatus] = useState('')
-  const canEditUi = ['localhost', '127.0.0.1'].includes(window.location.hostname)
-  const [editVisible, setEditVisible] = useState(() => canEditUi && new URLSearchParams(window.location.search).get('edit') === 'true')
-  const [uiSettings, setUiSettings] = useState(loadUi)
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    localStorage.setItem('estate-theme', theme)
-  }, [theme])
-
-  useEffect(() => {
-    applyUi(uiSettings)
-    localStorage.setItem('estate-flow-ui', JSON.stringify(uiSettings))
-  }, [uiSettings])
+  const [locationStatus, setLocationStatus] = useState('')
+  const [formStatus, setFormStatus] = useState('')
 
   const enrichedProperties = useMemo(() => {
-    return properties.map((property, index) => ({
+    return properties.map((property) => ({
       ...property,
-      distance: userLocation ? getDistanceKm(userLocation, property) : null,
-      views: 9000 - ((index * 137) % 7000),
-      isSpecial: index % 7 === 0 || property.status.includes('นัดชม'),
-      isNew: property.id > 160,
+      distanceKm: userLocation ? getDistanceKm(userLocation, property.coordinates) : null,
     }))
   }, [userLocation])
 
-  const filtered = useMemo(() => {
-    const terms = buildTerms(query)
+  const filteredProperties = useMemo(() => {
+    const keyword = query.trim().toLowerCase()
     return enrichedProperties
-      .filter((property) => !intent || property.listingType === intent)
-      .filter((property) => selectedTypes.length === 0 || selectedTypes.includes(property.propertyType))
-      .filter((property) => priceMatches(property, priceRange))
+      .filter((property) => intent === 'all' || property.listingType === intent)
+      .filter((property) => type === 'all' || property.propertyType === type)
       .filter((property) => {
-        if (!terms.length) return true
-        const text = normalize([property.title, property.location, property.propertyLabel, property.listingLabel, property.status, property.tags.join(' ')].join(' '))
-        return terms.some((term) => text.includes(term))
+        if (!keyword) return true
+        const text = [property.title, property.location, property.area, property.propertyLabel, property.status, property.tags.join(' ')].join(' ').toLowerCase()
+        return text.includes(keyword)
       })
-  }, [enrichedProperties, intent, priceRange, query, selectedTypes])
+      .sort((a, b) => {
+        if (a.distanceKm === null || b.distanceKm === null) return a.id - b.id
+        return a.distanceKm - b.distanceKm
+      })
+  }, [enrichedProperties, intent, query, type])
 
-  const related = useMemo(() => {
-    if (!detailProperty) return featuredProperties
-    return properties.filter((item) => item.propertyType === detailProperty.propertyType && item.id !== detailProperty.id).slice(0, 16)
-  }, [detailProperty])
+  const visibleProperties = filteredProperties.length ? filteredProperties : enrichedProperties
+  const activeProperty = enrichedProperties.find((property) => property.id === selectedProperty.id) || selectedProperty
 
-  const rows = useMemo(() => {
-    const fallback = enrichedProperties.filter((property) => (!intent || property.listingType === intent) && priceMatches(property, priceRange))
-    const base = filtered.length ? filtered : fallback
-    return [
-      { key: 'recommended', title: 'แนะนำสำหรับคุณ', subtitle: 'รายการเด่นที่เหมาะกับการตัดสินใจเร็ว', items: base.filter((item) => featuredProperties.some((featured) => featured.id === item.id)).concat(base).slice(0, 18) },
-      { key: 'nearby', title: 'ใกล้ฉัน', subtitle: userLocation ? 'เรียงตามระยะทางจากตำแหน่งของคุณ' : 'กดใช้พิกัดเพื่อเรียงรายการใกล้คุณ', items: [...base].sort((a, b) => (a.distance ?? 99999) - (b.distance ?? 99999)).slice(0, 18) },
-      { key: 'new', title: 'เข้าใหม่', subtitle: 'รายการล่าสุดที่เพิ่มเข้าระบบ', items: [...base].sort((a, b) => b.id - a.id).slice(0, 18) },
-      { key: 'special', title: 'น่าสนใจ', subtitle: 'ราคาและสถานะที่เหมาะสำหรับนัดชม', items: base.filter((item) => item.isSpecial || item.status.includes('นัดชม')).slice(0, 18) },
-    ]
-  }, [enrichedProperties, filtered, intent, priceRange, userLocation])
+  const propertySpecs = [
+    { icon: BedDouble, label: 'ห้องนอน', value: activeProperty.specs.bedrooms > 0 ? `${activeProperty.specs.bedrooms} ห้อง` : '-' },
+    { icon: Bath, label: 'ห้องน้ำ', value: activeProperty.specs.bathrooms > 0 ? `${activeProperty.specs.bathrooms} ห้อง` : '-' },
+    { icon: Car, label: 'ที่จอดรถ', value: activeProperty.specs.parking > 0 ? `${activeProperty.specs.parking} คัน` : '-' },
+    { icon: LandPlot, label: 'ที่ดิน', value: activeProperty.specs.land },
+    { icon: Ruler, label: 'พื้นที่ใช้สอย', value: activeProperty.specs.usable },
+  ]
 
   const requestLocation = () => {
-    if (!navigator.geolocation) {
-      setGeoStatus('ไม่รองรับพิกัด')
+    if (!('geolocation' in navigator)) {
+      setLocationStatus('เบราว์เซอร์นี้ยังไม่รองรับการใช้พิกัด')
       return
     }
-    setGeoStatus('กำลังใช้พิกัด...')
+
+    setLocationStatus('กำลังขออนุญาตใช้พิกัดจากเครื่องของคุณ...')
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setUserLocation({ lat: position.coords.latitude, lng: position.coords.longitude })
-        setGeoStatus('เรียงใกล้คุณแล้ว')
+        setLocationStatus('ใช้พิกัดแล้ว ระบบเรียงรายการใกล้คุณขึ้นมาก่อน')
       },
-      () => setGeoStatus('ยังไม่ได้อนุญาตพิกัด'),
-      { enableHighAccuracy: true, timeout: 10000 },
+      () => setLocationStatus('ยังไม่ได้อนุญาตให้ใช้พิกัด สามารถกดใหม่แล้วเลือก Allow ได้'),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
     )
   }
 
-  const toggleType = (value) => {
-    setSelectedTypes((current) => current.includes(value) ? current.filter((item) => item !== value) : [...current, value])
+  const submitLead = (event) => {
+    event.preventDefault()
+    setFormStatus('บันทึกข้อมูลตัวอย่างแล้ว ขั้นต่อไปสามารถเชื่อมฟอร์มกับ LINE, Email, Google Sheets หรือ CRM ได้')
   }
 
-  const clearFilters = () => {
-    setIntent('')
-    setSelectedTypes([])
-    setPriceRange('all')
-    setQuery('')
-  }
-
-  const updateUi = (key, value) => setUiSettings((current) => ({ ...current, [key]: value }))
-  const resetUi = () => setUiSettings(defaultUi)
-  const toggleTheme = () => setTheme((current) => current === 'dark' ? 'light' : 'dark')
-
-  if (detailSlug) {
-    return <DetailPage property={detailProperty} related={related} theme={theme} onTheme={toggleTheme} />
-  }
+  const navItems = [
+    ['บ้านเด่น', 'featured'],
+    ['แกลเลอรี', 'gallery'],
+    ['รายละเอียด', 'detail'],
+    ['ทำเล', 'location'],
+    ['คำค้นหา', 'seo'],
+    ['ติดต่อ', 'contact'],
+  ]
 
   return (
-    <main className={`flowApp flowStep-${step}`}>
-      <TransparentSearchBar
-        query={query}
-        onQuery={setQuery}
-        onSearch={() => setStep('results')}
-        theme={theme}
-        onTheme={toggleTheme}
-        currentStep={step}
-        onBack={() => setStep('results')}
-      />
+    <div className="siteShell">
+      <header className="siteHeader">
+        <a href="#top" className="brand" aria-label="ALPHA ESTATE บ้านขาย บ้านเช่า โคราช">
+          <span className="brandMark"><House size={18} /></span>
+          <span>
+            <strong>{contact.brand}</strong>
+            <small>บ้านขาย · บ้านเช่า · ที่ดินโคราช</small>
+          </span>
+        </a>
 
-      {step === 'intent' && <IntentScreen onChoose={(value) => { setIntent(value); setStep('results') }} />}
-      {step === 'types' && <TypeScreen intent={intent} selectedTypes={selectedTypes} onToggleType={toggleType} onNext={() => setStep('results')} onBack={() => setStep('results')} />}
-      {step === 'results' && (
-        <ResultsScreen
-          rows={rows}
-          onOpen={setSelectedProperty}
-          onLocation={requestLocation}
-          geoStatus={geoStatus}
-          selectedTypes={selectedTypes}
-          intent={intent}
-          onIntentChange={setIntent}
-          onToggleType={toggleType}
-          priceRange={priceRange}
-          onPriceChange={setPriceRange}
-          onClearFilters={clearFilters}
-          total={filtered.length}
-        />
+        <nav className="desktopNav" aria-label="เมนูหลัก">
+          {navItems.map(([label, id]) => <a key={id} href={`#${id}`}>{label}</a>)}
+        </nav>
+
+        <div className="headerActions">
+          <a className="ghostLink" href={contact.lineUrl} target="_blank" rel="noreferrer">LINE</a>
+          <a className="primaryLink" href={`tel:${contact.phoneHref}`}>โทรเลย</a>
+          <button className="menuButton" type="button" onClick={() => setMenuOpen((current) => !current)} aria-label="เปิดเมนู">
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+      </header>
+
+      {menuOpen && (
+        <div className="mobileNav">
+          {navItems.map(([label, id]) => <a key={id} href={`#${id}`} onClick={() => setMenuOpen(false)}>{label}</a>)}
+        </div>
       )}
 
-      <PropertyModal property={selectedProperty} onClose={() => setSelectedProperty(null)} />
-      {canEditUi && <UiPanel visible={editVisible} settings={uiSettings} onChange={updateUi} onReset={resetUi} onClose={() => setEditVisible(false)} />}
-    </main>
+      <main id="top">
+        <section className="heroSection" aria-labelledby="mainTitle">
+          <div className="heroBg" style={{ backgroundImage: `url(${activeProperty.image})` }} />
+          <div className="heroOverlay" />
+
+          <div className="heroContent">
+            <div className="searchPanel" aria-label="ค้นหาอสังหาริมทรัพย์">
+              <div className="searchPanelHeader">
+                <span>ค้นหาอสังหา</span>
+                <h1 id="mainTitle">บ้านขาย บ้านเช่า โคราช และอสังหาริมทรัพย์ใกล้คุณ</h1>
+                <p>เลือกซื้อ เช่า หรือดูทั้งหมด แล้วกรองประเภทบ้าน อาคาร หรือที่ดินเปล่าได้ทันที</p>
+              </div>
+
+              <div className="segmentedControl" aria-label="เลือกซื้อ เช่า หรือทั้งหมด">
+                {intentOptions.map((option) => (
+                  <button key={option.value} className={intent === option.value ? 'active' : ''} type="button" onClick={() => setIntent(option.value)}>
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+
+              <label className="searchField">
+                ทำเล / โครงการ
+                <span>
+                  <Search size={18} />
+                  <input type="text" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="เช่น โคราช, เขาใหญ่, ใกล้ห้าง" />
+                </span>
+              </label>
+
+              <div className="propertyTypeFilter" aria-label="ประเภทอสังหา">
+                {typeOptions.map((option) => (
+                  <button key={option.value} className={type === option.value ? 'active' : ''} type="button" onClick={() => setType(option.value)}>
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="locationRow">
+                <button className="useLocationButton" type="button" onClick={requestLocation}><MapPin size={17} /> ใช้พิกัดของฉัน</button>
+                <a className="searchSubmit" href="#featured">ดูผลลัพธ์ <ArrowRight size={17} /></a>
+              </div>
+              {locationStatus && <p className="locationStatus">{locationStatus}</p>}
+            </div>
+
+            <aside className="heroCard" aria-label="บ้านเด่น">
+              <span>{activeProperty.status}</span>
+              <h2>{activeProperty.title}</h2>
+              <p><MapPin size={16} /> {activeProperty.location}</p>
+              <strong>{activeProperty.priceText}</strong>
+              {activeProperty.distanceKm !== null && <small>ห่างจากคุณประมาณ {activeProperty.distanceKm} กม.</small>}
+            </aside>
+          </div>
+        </section>
+
+        <section className="section propertySection" id="featured">
+          <div className="sectionHeading">
+            <p className="eyebrow">Selected Properties</p>
+            <h2>รายการอสังหาที่ตรงกับการค้นหา</h2>
+            <p>พบ {filteredProperties.length} รายการจากตัวกรองปัจจุบัน{userLocation ? ' · เรียงจากระยะใกล้ที่สุด' : ' · กดใช้พิกัดเพื่อดูรายการใกล้คุณ'}</p>
+          </div>
+
+          <div className="propertyGrid">
+            {visibleProperties.map((property) => (
+              <button key={property.id} className={`propertyCard ${property.id === activeProperty.id ? 'active' : ''}`} type="button" onClick={() => setSelectedProperty(property)}>
+                <img src={property.image} alt={`${property.propertyLabel} ${property.status} ${property.location} ${property.title}`} loading="lazy" />
+                <div className="propertyCardBody">
+                  <div className="cardBadges">
+                    <span>{property.status}</span>
+                    <span>{property.propertyLabel}</span>
+                  </div>
+                  <h3>{property.title}</h3>
+                  <p><MapPin size={15} /> {property.location}</p>
+                  <strong>{property.priceText}</strong>
+                  {property.distanceKm !== null && <small>ห่างจากคุณประมาณ {property.distanceKm} กม.</small>}
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="gallerySection" id="gallery">
+          <div className="galleryIntro">
+            <p className="eyebrow">Image-first Gallery</p>
+            <h2>แกลเลอรีบ้านขาย บ้านเช่า และที่ดินแบบเว็บอสังหาหรู</h2>
+            <p>ใช้ภาพใหญ่ คุมระยะห่าง และลดข้อความ เพื่อให้ผู้ซื้อหรือผู้เช่าเห็นบรรยากาศบ้าน ทำเล และรายละเอียดสำคัญได้เร็ว</p>
+          </div>
+          <div className="galleryGrid">
+            {galleryItems.map((item, index) => (
+              <article className={`galleryCard gallery${index + 1}`} key={item.title}>
+                <img src={item.image} alt={`${item.title} สำหรับประกาศบ้านขาย บ้านเช่า โคราช`} loading="lazy" />
+                <div>
+                  <span>{item.label}</span>
+                  <h3>{item.title}</h3>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="section detailSection" id="detail">
+          <div className="detailCopy">
+            <p className="eyebrow">Property Detail</p>
+            <h2>{activeProperty.title}</h2>
+            <p className="largeText">{activeProperty.highlight}</p>
+            <p>{activeProperty.description}</p>
+            <ul className="checkList">
+              <li><CheckCircle2 size={18} /> ภาพบ้านจริงควรถูกจัดเป็นหมวด Exterior, Living, Bedroom, Kitchen, Bathroom</li>
+              <li><CheckCircle2 size={18} /> ข้อมูลสำคัญต้องอ่านจบได้ภายใน 5–10 วินาที</li>
+              <li><CheckCircle2 size={18} /> ปุ่ม LINE / โทร / นัดชมบ้าน ต้องเห็นชัดทั้งเดสก์ท็อปและมือถือ</li>
+            </ul>
+          </div>
+
+          <div className="specPanel">
+            <div className="priceBox">
+              <span>ราคา</span>
+              <strong>{activeProperty.priceText}</strong>
+              <p>{activeProperty.status}</p>
+            </div>
+            <div className="specGrid">
+              {propertySpecs.map((spec) => {
+                const Icon = spec.icon
+                return (
+                  <div className="specItem" key={spec.label}>
+                    <Icon size={22} />
+                    <span>{spec.label}</span>
+                    <strong>{spec.value}</strong>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="sellingSection" id="why">
+          {sellingPoints.map((point) => {
+            const Icon = point.icon
+            return (
+              <article key={point.title}>
+                <Icon size={26} />
+                <h3>{point.title}</h3>
+                <p>{point.text}</p>
+              </article>
+            )
+          })}
+        </section>
+
+        <section className="section locationSection" id="location">
+          <div className="mapCard">
+            <div className="mapVisual">
+              <MapPin size={44} />
+              <span>Google Maps Area</span>
+            </div>
+            <div className="mapDetails">
+              <p className="eyebrow">Location</p>
+              <h2>ทำเลโคราช เขาใหญ่ และนครราชสีมา ช่วยให้ตัดสินใจง่ายขึ้น</h2>
+              <p>พื้นที่นี้สามารถฝัง Google Maps จริง หรือใส่ภาพแผนที่โครงการพร้อมจุดสำคัญรอบบ้านได้</p>
+              <div className="nearbyList">
+                {nearby.map(([label, value]) => (
+                  <div key={label}>
+                    <span>{label}</span>
+                    <strong>{value}</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section seoSection" id="seo" aria-labelledby="seoTitle">
+          <div className="sectionHeading seoHeading">
+            <p className="eyebrow">Search-friendly Content</p>
+            <h2 id="seoTitle">ค้นหาอสังหาริมทรัพย์โคราชตามความต้องการ</h2>
+            <p>หน้าเว็บนี้จัดคอนเทนต์ให้ผู้ใช้และ Google เข้าใจว่าเว็บเกี่ยวกับบ้านขาย บ้านเช่า ที่ดินเปล่า อาคารพาณิชย์ และทำเลนครราชสีมา</p>
+          </div>
+          <div className="seoGrid">
+            {seoCards.map((card) => (
+              <article key={card.title}>
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+              </article>
+            ))}
+          </div>
+          <div className="seoKeywords" aria-label="คำค้นหาที่เกี่ยวข้อง">
+            {relatedKeywords.map((keyword) => <a href="#featured" key={keyword}>{keyword}</a>)}
+          </div>
+          <div className="seoFaq" aria-label="คำถามที่พบบ่อย">
+            <h3>คำถามที่พบบ่อยเกี่ยวกับการค้นหาบ้านและที่ดินในโคราช</h3>
+            {faqs.map((faq) => (
+              <details key={faq.question}>
+                <summary>{faq.question}</summary>
+                <p>{faq.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section className="section contactSection" id="contact">
+          <div className="contactCopy">
+            <p className="eyebrow">Book a Visit</p>
+            <h2>สนใจบ้าน ที่ดิน หรืออาคารพาณิชย์ นัดชมทรัพย์ได้ทันที</h2>
+            <p>ฟอร์มนี้ทำเป็นตัวอย่าง สามารถเชื่อมต่อกับ Email, LINE, Google Sheets, CRM หรือระบบหลังบ้านได้ภายหลัง</p>
+            <div className="contactMethods">
+              <a href={`tel:${contact.phoneHref}`}><Phone size={20} /><span>โทร<strong>{contact.phone}</strong></span></a>
+              <a href={contact.lineUrl} target="_blank" rel="noreferrer"><MessageCircle size={20} /><span>LINE<strong>สอบถาม / นัดชมบ้าน</strong></span></a>
+              <a href={`mailto:${contact.email}`}><Mail size={20} /><span>Email<strong>{contact.email}</strong></span></a>
+            </div>
+          </div>
+
+          <form className="contactForm" onSubmit={submitLead}>
+            <label>ชื่อผู้ติดต่อ<input type="text" placeholder="กรอกชื่อของคุณ" required /></label>
+            <label>เบอร์โทร<input type="tel" placeholder="เช่น 080-899-8155" required /></label>
+            <label>บ้านที่สนใจ
+              <select defaultValue={activeProperty.title}>
+                {properties.map((property) => <option key={property.id}>{property.title}</option>)}
+              </select>
+            </label>
+            <label>ข้อความเพิ่มเติม<textarea placeholder="ต้องการนัดชมวันไหน หรือสอบถามข้อมูลเพิ่มเติม" rows="4" /></label>
+            <button type="submit">ส่งข้อมูลให้ติดต่อกลับ <ChevronRight size={18} /></button>
+            {formStatus && <p className="formStatus">{formStatus}</p>}
+          </form>
+        </section>
+      </main>
+
+      <footer className="siteFooter">
+        <div><Building2 size={22} /><span>{contact.brand}</span></div>
+        <p>บ้านขาย บ้านเช่า ที่ดินเปล่า และอาคารพาณิชย์โคราช · Built with React + Vite</p>
+      </footer>
+
+      <div className="stickyCta" aria-label="ช่องทางติดต่อด่วน">
+        <a href={`tel:${contact.phoneHref}`}><Phone size={18} /> โทร</a>
+        <a href={contact.lineUrl} target="_blank" rel="noreferrer"><MessageCircle size={18} /> LINE</a>
+        <a href="#contact"><Star size={18} /> นัดชมบ้าน</a>
+      </div>
+    </div>
   )
 }
 
